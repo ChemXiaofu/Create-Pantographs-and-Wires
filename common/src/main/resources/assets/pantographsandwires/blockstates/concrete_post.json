@@ -1,0 +1,19 @@
+{
+    "variants": {
+        "facing=north": {
+            "model": "pantographsandwires:block/concrete_post"
+        },
+        "facing=east": {
+            "model": "pantographsandwires:block/concrete_post",
+            "y": 90
+        },
+        "facing=south": {
+            "model": "pantographsandwires:block/concrete_post",
+            "y": 180
+        },
+        "facing=west": {
+            "model": "pantographsandwires:block/concrete_post",
+            "y": 270
+        }
+    }
+}

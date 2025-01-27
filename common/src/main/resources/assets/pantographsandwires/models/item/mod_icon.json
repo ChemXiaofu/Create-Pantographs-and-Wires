@@ -1,0 +1,131 @@
+{
+    "parent": "pantographsandwires:block/pantograph",
+    "display": {
+      "thirdperson_righthand": {
+        "rotation": [
+          90,
+          17,
+          0
+        ],
+        "translation": [
+          -1.75,
+          4,
+          -3.75
+        ],
+        "scale": [
+          0.375,
+          0.375,
+          0.375
+        ]
+      },
+      "thirdperson_lefthand": {
+        "rotation": [
+          90,
+          17,
+          0
+        ],
+        "translation": [
+          -1.75,
+          4,
+          -3.75
+        ],
+        "scale": [
+          0.375,
+          0.375,
+          0.375
+        ]
+      },
+      "firstperson_righthand": {
+        "rotation": [
+          17.62,
+          15.08,
+          -4.71
+        ],
+        "translation": [
+          -1,
+          0.5,
+          0
+        ],
+        "scale": [
+          0.4,
+          0.4,
+          0.4
+        ]
+      },
+      "firstperson_lefthand": {
+        "rotation": [
+          17.62,
+          15.08,
+          -4.71
+        ],
+        "translation": [
+          -1,
+          0.5,
+          0
+        ],
+        "scale": [
+          0.4,
+          0.4,
+          0.4
+        ]
+      },
+      "ground": {
+        "translation": [
+          0,
+          3,
+          -3.25
+        ],
+        "scale": [
+          0.25,
+          0.25,
+          0.25
+        ]
+      },
+      "gui": {
+        "rotation": [
+          30,
+          225,
+          0
+        ],
+        "translation": [
+          1.25,
+          -6,
+          0
+        ],
+        "scale": [
+          0.33,
+          0.33,
+          0.33
+        ]
+      },
+      "head": {
+        "rotation": [
+          0,
+          180,
+          0
+        ],
+        "translation": [
+          0,
+          6.25,
+          0
+        ]
+      },
+      "fixed": {
+        "rotation": [
+          -90,
+          180,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0.5
+        ],
+        "scale": [
+          0.5,
+          0.5,
+          0.5
+        ]
+      }
+    }
+}

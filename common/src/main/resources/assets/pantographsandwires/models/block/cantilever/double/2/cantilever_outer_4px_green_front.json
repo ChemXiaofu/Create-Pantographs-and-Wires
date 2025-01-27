@@ -1,0 +1,125 @@
+{
+  "loader": "pantographsandwires:multipart_obj",
+  "automatic_culling": true,
+  "shade_quads": true,
+  "flip_v": true,
+  "emissive_ambient": false,
+  "model": "pantographsandwires:models/block/cantilever/double/2/cantilever_outer_4px.obj",
+  "textures": {
+    "particle": "pantographsandwires:block/metal"
+  },
+  "add": [
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        17.0,
+        10.5,
+        5.6000004
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        40.914383,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        17.0,
+        -0.577157,
+        4.594818
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        -2.5,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        17.0,
+        -2.6288407,
+        3.9946287
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        17.650124,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        -1.0,
+        13.399967,
+        12.808189
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        56.309933,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        -1.0,
+        3.4945896,
+        9.069348
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        5.0,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        -1.0,
+        0.45488542,
+        12.103373
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/cantilever/post_connection/lattice_long.obj",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        8.0,
+        10.5,
+        22.0
+      ],
+      "inheritable": false
+    },
+    {
+      "model": "pantographsandwires:models/block/cantilever/post_connection/lattice_long.obj",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        8.0,
+        -15.661648,
+        22.0
+      ],
+      "inheritable": false
+    }
+  ]
+}

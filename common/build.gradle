@@ -1,0 +1,19 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/pantographsandwires.accesswidener")
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"   
+
+    modCompileOnly("dev.architectury:architectury:${rootProject.architectury_api_version}")
+    modCompileOnly("com.electronwill.night-config:toml:3.6.0")
+    modCompileOnly("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${rootProject.forge_config_api_port_version}")
+    modImplementation("de.mrjulsen.mcdragonlib:dragonlib-fabric:${rootProject.minecraft_version}-${rootProject.dragonlib_version}")
+    modImplementation("com.simibubi.create:create-fabric-${rootProject.minecraft_version}:${rootProject.create_fabric_version}")
+    modImplementation("software.bernie.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft_version}:${rootProject.geckolib_fabric_version}")
+    modImplementation("com.eliotlash.mclib:mclib:20")
+}

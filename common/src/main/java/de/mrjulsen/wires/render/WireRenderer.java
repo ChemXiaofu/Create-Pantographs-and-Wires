@@ -1,0 +1,100 @@
+package de.mrjulsen.wires.render;
+
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import de.mrjulsen.mcdragonlib.data.Cache;
+import de.mrjulsen.paw.PantographsAndWires;
+import de.mrjulsen.paw.mixin.client.CompiledChunkAccess;
+import de.mrjulsen.paw.mixin.client.RenderChunkAccess;
+import de.mrjulsen.paw.util.CompiledChunkExtension;
+import de.mrjulsen.wires.WireNetwork;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ChunkBufferBuilderPack;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher.RenderChunk;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.BlockAndTintGetter;
+import java.util.Collection;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
+public class WireRenderer implements ResourceManagerReloadListener {
+
+	public static final Cache<TextureAtlasSprite> WIRE_TEXTURE = new Cache<>(
+		() -> Minecraft.getInstance().getModelManager()
+			.getAtlas(InventoryMenu.BLOCK_ATLAS)
+			.getSprite(new ResourceLocation(PantographsAndWires.MOD_ID, "block/wire"))
+	);
+
+	@Override
+	public void onResourceManagerReload(@Nonnull ResourceManager pResourceManager) {
+		WIRE_TEXTURE.clear();		
+	}
+
+	public static void renderConnectionsInSection(Set<RenderType> layers, ChunkBufferBuilderPack buffers, BlockAndTintGetter region, RenderChunk renderChunk) {
+		BlockPos chunkOrigin = renderChunk.getOrigin();
+		SectionPos chunkSection = SectionPos.of(chunkOrigin);
+		if (!WireNetwork.hasConnectionsInSection(chunkSection)) {
+			return;
+		}
+
+		RenderType renderType = RenderType.solid();//ModRenderType.WIRE;
+		BufferBuilder builder = buffers.builder(renderType);
+		CompiledChunkAccess compiledAccess = (CompiledChunkAccess)renderChunk.compiled.get();
+		if(layers.add(renderType)) {
+			((RenderChunkAccess)renderChunk).invokeBeginLayer(builder);		
+		}
+
+		VertexConsumer vertexConsumer = builder;
+		PoseStack poseStack = new PoseStack();
+
+		Collection<WireSegmentRenderDataBatch> connections = WireNetwork.connectionsInSection(chunkSection);
+
+		for (WireSegmentRenderDataBatch connection : connections) {
+			connection.render(vertexConsumer);
+			/*
+			for (WireSegmentRenderData segment : connection.getSubWireSegments()) {	
+				Vec3 point = segment.getPoint(0).vertex(VertexCorner.CENTER);
+				BlockPos pos = chunkOrigin.offset(point.x(), point.y(), point.z());
+				poseStack.pushPose();
+				poseStack.translate((double)(chunkOrigin.getX() & 15), (double)(chunkOrigin.getY() & 15), (double)(chunkOrigin.getZ() & 15));
+				poseStack.translate(point.x(), point.y(), point.z());
+				//poseStack.scale(0.2f, 0.2f, 0.2f);
+				poseStack.mulPose(Vector3f.XN.rotationDegrees(90));
+				poseStack.translate(-0.5f, -0.5f, -0.5f);
+				//Minecraft.getInstance().getBlockRenderer().renderBatched(ModBlocks.I_INSULATOR_BROWN.get().defaultBlockState(), pos, region, poseStack, vertexConsumer, false, new Random());
+
+				//LevelRenderer.renderLineBox(poseStack, vertexConsumer, new AABB(pos), SEGMENTS_AUTO, SEGMENTS_AUTO, SEGMENTS_AUTO, SEGMENTS_AUTO);
+
+				BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
+				blockRenderer.getModelRenderer().renderModel(
+					poseStack.last(),
+					buffers.builder(RenderType.solid()),
+					ModBlocks.I_INSULATOR_BROWN.get().defaultBlockState(),
+					blockRenderer.getBlockModel(ModBlocks.I_INSULATOR_BROWN.get().defaultBlockState()),
+					1,
+					1,
+					1,
+					LevelRenderer.getLightColor(Minecraft.getInstance().level, chunkOrigin),
+					0
+				);
+				poseStack.popPose();
+			}
+			*/
+			//renderCatenary(vertexConsumer, connection.getRelativeStart(), connection.getRelativeEnd());
+		}
+		
+		CompiledChunkExtension ext = (CompiledChunkExtension)renderChunk.compiled.get();
+		ext.setHasWires(true);
+	}
+	
+}

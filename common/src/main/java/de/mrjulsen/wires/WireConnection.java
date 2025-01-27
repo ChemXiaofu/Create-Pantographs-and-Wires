@@ -1,0 +1,181 @@
+package de.mrjulsen.wires;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+import com.google.common.collect.Multimap;
+
+import de.mrjulsen.paw.PantographsAndWires;
+import de.mrjulsen.wires.block.IWireConnector;
+import de.mrjulsen.wires.network.WireConnectionSyncData;
+import de.mrjulsen.mcdragonlib.data.Cache;
+import de.mrjulsen.mcdragonlib.util.DLUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+
+public class WireConnection {
+
+    private static final String NBT_ID = "Id";
+    private static final String NBT_POS_A = "PosA";
+    private static final String NBT_POS_B = "PosB";
+    private static final String NBT_WIRE_TYPE = "WireType";
+    private static final String NBT_CONNECTION_DATA_A = "CachedDataA";
+    private static final String NBT_CONNECTION_DATA_B = "CachedDataB";
+    private static final String NBT_CREATION_DATA = "CreationData";
+
+    private final UUID id;
+    private final BlockPos pointA;
+    private final BlockPos pointB;
+    private final IWireType wireType;
+    private CompoundTag connectionANbt; // ConnectorA data
+    private CompoundTag connectionBNbt; // ConnectorA data
+    private final CompoundTag creationData; // = itemData: Additional data from the item when the wire was created.
+
+    // Server
+    private WireCollision collisionRef;
+    private WireConnectionSyncData syncData;
+
+    private final Cache<Integer> hashCache = new Cache<>(() -> {
+        return 31 * Objects.hash(getPointA(), getPointB(), getConnectionANbt(), getConnectionBNbt(), getWireType().getRegistryId()) * Objects.hash(getPointB(), getPointA(), getConnectionBNbt(), getConnectionANbt(), getWireType().getRegistryId());
+    });
+    
+    public WireConnection(UUID id, BlockPos pointA, BlockPos pointB, IWireType type, CompoundTag connectionANbt, CompoundTag connectionBNbt, CompoundTag creationData) {
+        this.id = id;
+        this.pointA = pointA;
+        this.pointB = pointB;
+        this.wireType = type;
+        this.connectionANbt = connectionANbt;
+        this.connectionBNbt = connectionBNbt;
+        this.creationData = creationData;
+    }
+
+    public CompoundTag toNbt() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putUUID(NBT_ID, id);
+        DLUtils.putNbtBlockPos(nbt, NBT_POS_A, pointA);
+        DLUtils.putNbtBlockPos(nbt, NBT_POS_B, pointB);
+        nbt.putString(NBT_WIRE_TYPE, wireType.getRegistryId().toString());
+        nbt.put(NBT_CONNECTION_DATA_A, connectionANbt);
+        nbt.put(NBT_CONNECTION_DATA_B, connectionBNbt);
+        nbt.put(NBT_CREATION_DATA, creationData);
+        return nbt;
+    }
+
+    public static Optional<WireConnection> fromNbt(CompoundTag nbt) {
+        ResourceLocation wireTypeId = new ResourceLocation(nbt.getString(NBT_WIRE_TYPE));
+        if (WireTypeRegistry.has(wireTypeId)) {
+            return Optional.of(new WireConnection(
+                nbt.getUUID(NBT_ID),
+                DLUtils.getNbtBlockPos(nbt, NBT_POS_A),
+                DLUtils.getNbtBlockPos(nbt, NBT_POS_B),
+                WireTypeRegistry.get(wireTypeId),
+                nbt.getCompound(NBT_CONNECTION_DATA_A),
+                nbt.getCompound(NBT_CONNECTION_DATA_B),
+                nbt.getCompound(NBT_CREATION_DATA)
+            ));
+        }
+        return Optional.empty();        
+    }
+
+    public boolean recalcAttachPoints(Level level, Multimap<ChunkPos, WireCollision> chunkMap, Multimap<SectionPos, WireCollision> sectionMap, Multimap<BlockPos, WireCollision> blockMap) {
+        boolean hasChanged = false;
+        if (level.isLoaded(getPointA()) && level.getBlockState(getPointA()).getBlock() instanceof IWireConnector c) {
+            CompoundTag connectorData = c.wireRenderData(level, getPointA(), level.getBlockState(getPointA()), getCreationDataContext(), true);
+            if (!connectionANbt.equals(connectorData)) {
+                this.connectionANbt = connectorData;
+                hasChanged = true;
+            }
+        }
+        if (level.isLoaded(getPointB()) && level.getBlockState(getPointB()).getBlock() instanceof IWireConnector c) {
+            CompoundTag connectorData = c.wireRenderData(level, getPointB(), level.getBlockState(getPointB()), getCreationDataContext(), false);
+            if (!connectionBNbt.equals(connectorData)) {
+                this.connectionBNbt = connectorData;
+                hasChanged = true;
+            }
+        }
+        if (!hasChanged) return false;
+        WireConnectionSyncData sync = WireConnectionSyncData.of(this);
+        WireCollision collision = new WireCollision(chunkMap, sectionMap, blockMap, this.getId(), getPointA(), getWireType().buildWire(WireCreationContext.COLLISION, level, sync).getCollisions());
+        setCollisionData(collision);
+        setWireConnectionSyncData(sync);
+        PantographsAndWires.LOGGER.warn("A wire was misaligned! Data has been corrected. ID: {}, PointA: {}, PointB: {}", id, pointA, pointB);
+        return true; 
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public BlockPos getPointA() {
+        return pointA;
+    }
+
+    public BlockPos getPointB() {
+        return pointB;
+    }
+
+    public IWireType getWireType() {
+        return wireType;
+    }    
+
+    public CompoundTag getConnectionANbt() {
+        return connectionANbt;
+    } 
+
+    public CompoundTag getConnectionBNbt() {
+        return connectionBNbt;
+    }
+
+    public CompoundTag getCreationDataContext() {
+        return creationData;
+    }
+
+    public void setCollisionData(WireCollision data) {
+        this.collisionRef = data;
+    }
+
+    public WireCollision getCollisionData() {
+        return collisionRef;
+    }
+
+    public void setWireConnectionSyncData(WireConnectionSyncData data) {
+        this.syncData = data;
+    }
+
+    public WireConnectionSyncData getWireConnectionSyncData() {
+        return syncData;
+    }
+
+
+    public SectionPos originChunkSection() {
+        return SectionPos.of(pointA);
+    }
+    
+    public Vec3 getRelativeStart() {
+        return calcRelative(pointA);
+    }
+
+    public Vec3 getRelativeEnd() {  
+        return calcRelative(pointB);
+    }
+
+    public Vec3 calcRelative(BlockPos pos) {  
+        BlockPos sectionPos = originChunkSection().origin();
+        return new Vec3(
+            pos.getX() - sectionPos.getX(),
+            pos.getY() - sectionPos.getY(),
+            pos.getZ() - sectionPos.getZ()
+        );
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCache.get();
+    }
+}

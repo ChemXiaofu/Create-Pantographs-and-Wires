@@ -1,0 +1,80 @@
+package de.mrjulsen.paw.block;
+
+import java.util.Objects;
+
+import de.mrjulsen.paw.block.abstractions.AbstractRotatedConnectableBlock;
+import de.mrjulsen.paw.block.extended.BlockPlaceContextExtension;
+import de.mrjulsen.paw.registry.ModBlocks;
+import de.mrjulsen.mcdragonlib.config.ECachingPriority;
+import de.mrjulsen.mcdragonlib.data.MapCache;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+public abstract class CantileverBracketBaseBlock extends AbstractRotatedConnectableBlock {
+    
+    protected static final record ShapeContext(BlockGetter level, BlockPos pos, BlockState state, CollisionContext context) {}
+
+    private final MapCache<VoxelShape, BlockState, ShapeContext> shapeContext = new MapCache<>(c -> makeShape(c), (state) -> Objects.hash(state.getValues().values().toArray(Object[]::new)), ECachingPriority.ALWAYS);
+    
+    public CantileverBracketBaseBlock(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+        return new ItemStack(ModBlocks.CANTILEVER_BRACKET.get());
+    }
+
+    protected VoxelShape makeShape(ShapeContext c) {      
+        double stretch = 16d * ((1d / Math.cos(Math.abs(Math.toRadians(getRelativeYRotation(c.state()))))) - 1d);
+        double halfStretch = stretch / 2;
+        return switch (c.state().getValue(FACING)) {            
+            case SOUTH -> Block.box(6d, 6d, 0 - halfStretch, 10d, 10d, 16d + halfStretch);
+            case WEST  -> Block.box(0 - halfStretch, 6d, 6d, 16d + halfStretch, 10d, 10d);
+            case EAST  -> Block.box(0 - halfStretch, 6d, 6d, 16d + halfStretch, 10d, 10d);
+            default    -> Block.box(6d, 6d, 0 - halfStretch, 10d, 10d, 16d + halfStretch);
+        };
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockPlaceContextExtension ctxExt = (BlockPlaceContextExtension)(Object)context;
+        BlockState state = super.getStateForPlacement(context);
+        BlockState clickedOnState = ctxExt.getPlacedOnState();
+        Direction clickedFace = context.getClickedFace();
+        
+        if ((clickedOnState.getBlock() instanceof CantileverBracketBaseBlock || clickedOnState.getBlock() instanceof CantileverBracketVerticalBlock) && clickedFace.getAxis().isVertical()) {
+            state = ModBlocks.CANTILEVER_BRACKET_VERTICAL.getDefaultState()
+                .setValue(CantileverBracketVerticalBlock.DIRECTION, clickedFace)
+                .setValue(FACING, clickedOnState.getValue(FACING))
+                .setValue(ROTATION, clickedOnState.getValue(ROTATION))
+            ;
+        }
+
+        return state;
+    }
+
+    @Override
+    protected boolean canConnect(Level level, BlockState state, BlockPos pos, BlockState otherState, BlockPos otherPos) {
+        return otherState.getBlock() instanceof CantileverBracketBaseBlock;
+    }
+
+    @Override
+    public VoxelShape getBaseShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return shapeContext.get(new ShapeContext(level, pos, state, context), state);
+    }
+
+    @Override
+    public Axis transformOnAxis(BlockState state) {
+        return state.getValue(FACING).getAxis();
+    }
+}

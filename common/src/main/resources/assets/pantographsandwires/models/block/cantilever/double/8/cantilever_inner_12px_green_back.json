@@ -1,0 +1,97 @@
+{
+  "loader": "pantographsandwires:multipart_obj",
+  "automatic_culling": true,
+  "shade_quads": true,
+  "flip_v": true,
+  "emissive_ambient": false,
+  "model": "pantographsandwires:models/block/cantilever/double/8/cantilever_inner_12px.obj",
+  "textures": {
+    "particle": "pantographsandwires:block/metal"
+  },
+  "add": [
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        33.581554,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        17.0,
+        -58.291008,
+        10.002246
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        3.2838624,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        17.0,
+        10.95744,
+        10.013136
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        29.649864,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        -1.0,
+        -58.826225,
+        9.656979
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/insulator/base/green_insulator.obj",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        -1.0,
+        10.5,
+        10.0
+      ],
+      "inheritable": true
+    },
+    {
+      "model": "pantographsandwires:models/block/cantilever/post_connection/lattice_long.obj",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        8.0,
+        10.499178,
+        18.0
+      ],
+      "inheritable": false
+    },
+    {
+      "model": "pantographsandwires:models/block/cantilever/post_connection/lattice_long.obj",
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "offset": [
+        8.0,
+        -63.60099,
+        18.0
+      ],
+      "inheritable": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+package de.mrjulsen.paw.block.abstractions;
+
+import de.mrjulsen.wires.block.IWireConnector;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+
+public interface ICatenaryWireConnector extends IWireConnector {
+    Vec3 tensionWireAttachPoint(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint);
+}

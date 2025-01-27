@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "values": [
+        "pantographsandwires:cantilever_bracket_vertical",
+        "#minecraft:fences"
+    ]
+}

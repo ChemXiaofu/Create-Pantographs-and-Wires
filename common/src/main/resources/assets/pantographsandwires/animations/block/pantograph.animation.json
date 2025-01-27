@@ -1,0 +1,198 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"wire_contact": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 1,
+			"bones": {
+				"lower_arm": {
+					"rotation": {
+						"vector": ["(query.func-query.func2)/2", 0, 0]
+					}
+				},
+				"upper_arm": {
+					"rotation": {
+						"vector": ["-(query.func-query.func2)", 0, 0]
+					}
+				},
+				"arm_connection": {
+					"rotation": {
+						"vector": ["(query.func-query.func2)/2", 0, 0]
+					}
+				},
+				"coupling_rod": {
+					"rotation": {
+						"vector": ["(query.func-query.func2)/2*1.19", 0, 0]
+					}
+				},
+				"head": {
+					"rotation": {
+						"vector": ["query.head_rotation", 0, 0]
+					},
+					"position": {
+						"vector": [0, "((query.height_percentage+0.04)*query.max_height)-1.5", 0]
+					}
+				}
+			}
+		},
+		"expand": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 1,
+			"bones": {
+				"lower_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": ["(query.func_start-query.func2)/2", 0, 0]
+						},
+						"1.0": {
+							"vector": ["(query.func-query.func2)/2", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				},
+				"upper_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": ["-(query.func_start-query.func2)", 0, 0]
+						},
+						"1.0": {
+							"vector": ["-(query.func-query.func2)", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				},
+				"arm_connection": {
+					"rotation": {
+						"0.0": {
+							"vector": ["(query.func_start-query.func2)/2", 0, 0]
+						},
+						"1.0": {
+							"vector": ["(query.func-query.func2)/2", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				},
+				"coupling_rod": {
+					"rotation": {
+						"0.0": {
+							"vector": ["(query.func_start-query.func2)/2*1.19", 0, 0]
+						},
+						"1.0": {
+							"vector": ["(query.func-query.func2)/2*1.19", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				},
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": ["query.head_rotation", 0, 0]
+						},
+						"1.0": {
+							"vector": ["query.head_rotation", 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, "((0+0.04)*query.max_height)-1.5", 0]
+						},
+						"1.0": {
+							"vector": [0, "((query.height_percentage+0.04)*query.max_height)-1.5", 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				}
+			}
+		},
+		"collapse": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 1,
+			"bones": {
+				"lower_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": ["(query.func-query.func2)/2", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						},
+						"1.0": {
+							"vector": ["(query.func_start-query.func2)/2", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				},
+				"upper_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": ["-(query.func-query.func2)", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						},
+						"1.0": {
+							"vector": ["-(query.func_start-query.func2)", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				},
+				"arm_connection": {
+					"rotation": {
+						"0.0": {
+							"vector": ["(query.func-query.func2)/2", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						},
+						"1.0": {
+							"vector": ["(query.func_start-query.func2)/2", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				},
+				"coupling_rod": {
+					"rotation": {
+						"0.0": {
+							"vector": ["(query.func-query.func2)/2*1.19", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						},
+						"1.0": {
+							"vector": ["(query.func_start-query.func2)/2*1.19", 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				},
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": ["query.head_rotation", 0, 0]
+						},
+						"1.0": {
+							"vector": ["query.head_rotation", 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, "((query.height_percentage+0.04)*query.max_height)-1.5", 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						},
+						"1.0": {
+							"vector": [0, "((0+0.04)*query.max_height)-1.5", 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.1]
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

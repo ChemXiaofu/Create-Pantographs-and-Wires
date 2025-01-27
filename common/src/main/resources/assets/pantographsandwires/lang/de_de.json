@@ -1,0 +1,46 @@
+{
+    "itemGroup.pantographsandwires.tab": "Create: Pantographs & Wires",
+    
+    "block.pantographsandwires.pantograph": "Pantograf",
+    "block.pantographsandwires.tensioning_device": "Radspannwerk",
+    "block.pantographsandwires.lattice_mast": "Gittermast",
+    "block.pantographsandwires.flat_lattice_mast": "Rahmenflachmast",
+    "block.pantographsandwires.flat_lattice_mast_diagonal": "Rahmenflachmast (diagonal)",
+    "block.pantographsandwires.concrete_pillar": "Betonsäule",
+    "block.pantographsandwires.concrete_post": "Betonpfosten",
+    "block.pantographsandwires.h_beam_mast": "Peiner Mast",
+    "block.pantographsandwires.insulator_brown": "Brauner Isolator",
+    "block.pantographsandwires.insulator_green": "Grüner Isolator",
+    "block.pantographsandwires.v_insulator_brown": "V-förmiger Isolator",
+    "block.pantographsandwires.v_insulator_green": "V-förmiger Isolator",
+    "block.pantographsandwires.u_insulator_brown": "U-förmiger Isolator",
+    "block.pantographsandwires.u_insulator_green": "U-förmiger Isolator",
+    "block.pantographsandwires.cantilever_3_green": "Ausleger",
+    "block.pantographsandwires.cantilever_3_brown": "Ausleger",
+    "block.pantographsandwires.cantilever_bracket": "Rohrauslegerachse",
+    "block.pantographsandwires.cantilever_bracket_vertical": "Hängejoch",
+    "block.pantographsandwires.cantilever_bracket_at_post": "Rohrauslegerachse (Mastverbindung)",
+    "block.pantographsandwires.power_line_bracket": "Energieleitungshalterung",
+
+    "item.pantographsandwires.cantilever": "Ausleger",
+    "item.pantographsandwires.catenary_wire": "Kettenfahrleitung",
+    "item.pantographsandwires.power_wire": "Energiekabel",
+    "item.pantographsandwires.wire.connection_not_loaded": "Einer der Verbindungspunkte ist nicht geladen.",
+    "item.pantographsandwires.wire.connector_invalid": "Einer der Verbindungspunkte ist ungültig.",
+    "item.pantographsandwires.wire.same_connector": "Kann nicht mit dem selben Verbindungspunkt verbunden werden.",
+    "item.pantographsandwires.wire.connection_already_exists": "Diese Verbindung existiert bereits.",
+    "item.pantographsandwires.wire.to_far_away": "Zu weit vom anderen Verbindungspunkt entfernt. Max. %s Blöcke.",
+    
+    "gui.pantographsandwires.cantilever_settings.title": "Ausleger konfigurieren",
+    "gui.pantographsandwires.cantilever_settings.size": "Größe",
+    
+    "enum.pantographsandwires.cantilever_registration_arm": "Seitenhalter",
+    "enum.pantographsandwires.cantilever_registration_arm.center": "Zentriert",
+    "enum.pantographsandwires.cantilever_registration_arm.inner": "Innen",
+    "enum.pantographsandwires.cantilever_registration_arm.outer": "Außen",
+
+    "enum.pantographsandwires.insulator_placement": "Isolatorplatzierung",
+    "enum.pantographsandwires.insulator_placement.none": "Keine",
+    "enum.pantographsandwires.insulator_placement.back": "Hinten",
+    "enum.pantographsandwires.insulator_placement.front": "Vorne"
+}

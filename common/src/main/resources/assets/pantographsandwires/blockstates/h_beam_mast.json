@@ -1,0 +1,19 @@
+{
+    "variants": {
+        "facing=north": {
+            "model": "pantographsandwires:block/h_beam_mast"
+        },
+        "facing=east": {
+            "model": "pantographsandwires:block/h_beam_mast",
+            "y": 90
+        },
+        "facing=south": {
+            "model": "pantographsandwires:block/h_beam_mast",
+            "y": 180
+        },
+        "facing=west": {
+            "model": "pantographsandwires:block/h_beam_mast",
+            "y": 270
+        }
+    }
+}

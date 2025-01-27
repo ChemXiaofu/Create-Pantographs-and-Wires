@@ -1,0 +1,32 @@
+{
+  "required": true,
+  "package": "de.mrjulsen.paw.mixin",
+  "plugin": "de.mrjulsen.paw.mixin.ext.MixinConfig",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "client": [
+    "client.RebuildTaskMixin",
+    "client.CompiledChunkAccess",
+    "client.CompiledChunkMixin",
+    "client.RenderChunkAccess",
+    "client.LevelRendererMixin",
+    "client.RenderRegionCacheMixin",
+    "client.ParticleEngineMixin",
+    "client.MultiPlayerGameModeMixin",
+    "client.ModelBlockRendererMixin"
+  ],
+  "mixins": [
+    "AbstractBlockStateMixin",
+    "LevelChunkMixin",
+    "ChunkMapMixin",
+    "BlockGetterMixin",
+    "BlockItemMixin",
+    "LevelMixin",
+    "BlockStateBaseMixin",
+    "BlockPlaceContextMixin",
+    "ServerLevelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

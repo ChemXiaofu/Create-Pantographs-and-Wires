@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "pantographsandwires:block/tensioning_device"
+    },
+    "facing=east": {
+      "model": "pantographsandwires:block/tensioning_device",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "pantographsandwires:block/tensioning_device",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "pantographsandwires:block/tensioning_device",
+      "y": 270
+    }
+  }
+}

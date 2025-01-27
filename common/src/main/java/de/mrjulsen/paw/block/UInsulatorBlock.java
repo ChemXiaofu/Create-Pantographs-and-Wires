@@ -1,0 +1,47 @@
+package de.mrjulsen.paw.block;
+
+import de.mrjulsen.paw.util.Const;
+import de.mrjulsen.paw.util.ModMath;
+import de.mrjulsen.mcdragonlib.config.ECachingPriority;
+import de.mrjulsen.mcdragonlib.data.MapCache;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+public class UInsulatorBlock extends AbstractPlaceableHangingInsulatorBlock {
+    
+    private static final VoxelShape SHAPE = Block.box(5, 1, 2, 11, 16, 14);
+    private final MapCache<VoxelShape, TransformationShapeKey, TransformationShapeKey> shapesCache;
+
+    public UInsulatorBlock(Properties properties) {
+        super(Properties.of().mapColor(MapColor.METAL)
+            .noOcclusion()
+        );
+        this.shapesCache = new MapCache<>((key) -> {
+            Direction direction = key.direction();
+            VoxelShape result = ModMath.rotateShape(SHAPE, Axis.Y, (int)direction.getOpposite().toYRot());
+    
+            return result;
+        }, TransformationShapeKey::hashCode, ECachingPriority.ALWAYS);
+    }
+
+    @Override
+    public VoxelShape getBaseShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        TransformationShapeKey key = new TransformationShapeKey(state.getValue(FACING), normalizedPropertyRotationIndex(state), state);
+        return shapesCache.get(key, key);
+    }
+
+    @Override
+    public Vec3 defaultWireAttachPoint(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint) {
+        return new Vec3(0, Const.PIXEL * 2f, 0);
+    }
+}

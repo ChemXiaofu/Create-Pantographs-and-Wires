@@ -1,0 +1,46 @@
+{
+    "itemGroup.pantographsandwires.tab": "Create: Pantographs & Wires",
+    
+    "block.pantographsandwires.pantograph": "Pantograph",
+    "block.pantographsandwires.tensioning_device": "Tensioning Device",
+    "block.pantographsandwires.lattice_mast": "Lattice Mast",
+    "block.pantographsandwires.flat_lattice_mast": "Flat Lattice Mast",
+    "block.pantographsandwires.flat_lattice_mast_diagonal": "Flat Lattice Mast (diagonal)",
+    "block.pantographsandwires.concrete_pillar": "Concrete Pillar",
+    "block.pantographsandwires.concrete_post": "Concrete Post",
+    "block.pantographsandwires.h_beam_mast": "H-Beam Mast",
+    "block.pantographsandwires.insulator_brown": "Brown Insulator",
+    "block.pantographsandwires.insulator_green": "Green Insulator",
+    "block.pantographsandwires.v_insulator_brown": "V-shaped Insulator",
+    "block.pantographsandwires.v_insulator_green": "V-shaped Insulator",
+    "block.pantographsandwires.u_insulator_brown": "U-shaped Insulator",
+    "block.pantographsandwires.u_insulator_green": "U-shaped Insulator",
+    "block.pantographsandwires.cantilever_3_green": "Cantilever",
+    "block.pantographsandwires.cantilever_3_brown": "Cantilever",
+    "block.pantographsandwires.cantilever_bracket": "Cantilever Bracket",
+    "block.pantographsandwires.cantilever_bracket_vertical": "Cantilever Bracket (Vertical Extension)",
+    "block.pantographsandwires.cantilever_bracket_at_post": "Cantilever Bracket (Mast connection)",
+    "block.pantographsandwires.power_line_bracket": "Power Line Bracket",
+
+    "item.pantographsandwires.cantilever": "Cantilever",
+    "item.pantographsandwires.catenary_wire": "Catenary Wire",
+    "item.pantographsandwires.power_wire": "Power Wire",
+    "item.pantographsandwires.wire.connection_not_loaded": "One of the connectors is not loaded.",
+    "item.pantographsandwires.wire.connector_invalid": "One of the connectors is invalid.",
+    "item.pantographsandwires.wire.same_connector": "Cannot connect to the same connector.",
+    "item.pantographsandwires.wire.connection_already_exists": "This connection does already exist.",
+    "item.pantographsandwires.wire.to_far_away": "Too far away from previous connection point. Max. %s blocks.",
+    
+    "gui.pantographsandwires.cantilever_settings.title": "Cantilever Configuration",
+    "gui.pantographsandwires.cantilever_settings.size": "Size",
+    
+    "enum.pantographsandwires.cantilever_registration_arm": "Registration Arm",
+    "enum.pantographsandwires.cantilever_registration_arm.center": "Centered",
+    "enum.pantographsandwires.cantilever_registration_arm.inner": "Inner",
+    "enum.pantographsandwires.cantilever_registration_arm.outer": "Outer",
+
+    "enum.pantographsandwires.insulator_placement": "Insulator Placement",
+    "enum.pantographsandwires.insulator_placement.none": "None",
+    "enum.pantographsandwires.insulator_placement.back": "Back",
+    "enum.pantographsandwires.insulator_placement.front": "Front"
+}

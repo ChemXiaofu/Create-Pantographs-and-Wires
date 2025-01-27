@@ -1,0 +1,91 @@
+package de.mrjulsen.paw.client.model;
+
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class BakedModelExtension<T extends BakedModel> implements BakedModel {
+    
+    private BlockAndTintGetter level;
+    private BlockPos pos;
+    
+    protected final T originalModel;
+
+    public BakedModelExtension(T originalModel) {
+        this.originalModel = originalModel;
+    }
+
+    public void setAdditionalData(BlockAndTintGetter level, BlockPos pos) {
+        this.level = level;
+        this.pos = pos;
+    }
+
+    public void clearAdditionalData() {
+        this.level = null;
+        this.pos = null;
+    }
+
+    public boolean hasAdditionalData() {
+        return level != null && pos != null;
+    }
+
+    public BlockAndTintGetter getLevel() {
+        return level;
+    }
+
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    @Override
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand)
+    {
+        return originalModel.getQuads(state, side, rand);
+    }
+
+    @Override
+    public boolean useAmbientOcclusion() {
+        return originalModel.useAmbientOcclusion();
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return originalModel.isGui3d();
+    }
+
+    @Override
+    public boolean usesBlockLight() {
+        return originalModel.usesBlockLight();
+    }
+
+    @Override
+    public boolean isCustomRenderer() {
+        return originalModel.isCustomRenderer();
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleIcon() {
+        return originalModel.getParticleIcon();
+    }
+
+    @Override
+    public ItemTransforms getTransforms() {
+        return originalModel.getTransforms();
+    }
+
+    @Override
+    public ItemOverrides getOverrides() {
+        return originalModel.getOverrides();
+    }
+}

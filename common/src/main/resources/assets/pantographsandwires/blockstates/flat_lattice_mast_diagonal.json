@@ -1,0 +1,53 @@
+{
+	"variants": {
+		"facing=north,part=in_between": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal"
+		},
+		"facing=east,part=in_between": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal",
+			"y": 90
+		},
+		"facing=south,part=in_between": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal",
+			"y": 180
+		},
+		"facing=west,part=in_between": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal",
+			"y": 270
+		},
+
+		
+		"facing=north,part=bottom": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal_foundation"
+		},
+		"facing=east,part=bottom": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal_foundation",
+			"y": 90
+		},
+		"facing=south,part=bottom": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal_foundation",
+			"y": 180
+		},
+		"facing=west,part=bottom": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal_foundation",
+			"y": 270
+		},
+
+		
+		"facing=north,part=top": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal_top"
+		},
+		"facing=east,part=top": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal_top",
+			"y": 90
+		},
+		"facing=south,part=top": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal_top",
+			"y": 180
+		},
+		"facing=west,part=top": {
+			"model": "pantographsandwires:block/flat_lattice_mast_diagonal_top",
+			"y": 270
+		}
+	}
+}

@@ -1,0 +1,239 @@
+{
+    "multipart": [
+        {
+            "when": {
+                "facing": "north"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket"
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "east"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket",
+                    "y": 90
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "south"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket",
+                    "y": 180
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "west"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket",
+                    "y": 270
+                }
+            ]
+        },
+
+
+        {
+            "when": {
+                "up": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_crossing_post_part"
+                }
+            ]
+        },
+        {
+            "when": {
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_crossing_post_part",
+                    "x": 180
+                }
+            ]
+        },
+
+
+        
+
+        {
+            "when": {
+                "facing": "north",
+                "up": false,
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_t_cross"
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "east",
+                "up": false,
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_t_cross",
+                    "y": 90
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "south",
+                "up": false,
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_t_cross",
+                    "y": 180
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "west",
+                "up": false,
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_t_cross",
+                    "y": 270
+                }
+            ]
+        },
+
+
+
+        
+        {
+            "when": {
+                "facing": "north",
+                "up": true,
+                "down": false
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_t_cross",
+                    "x": 180
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "east",
+                "up": true,
+                "down": false
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_t_cross",
+                    "y": 90,
+                    "x": 180
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "south",
+                "up": true,
+                "down": false
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_t_cross",
+                    "y": 180,
+                    "x": 180
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "west",
+                "up": true,
+                "down": false
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_t_cross",
+                    "y": 270,
+                    "x": 180
+                }
+            ]
+        },
+
+
+
+        
+        {
+            "when": {
+                "facing": "north",
+                "up": true,
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_cross"
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "east",
+                "up": true,
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_cross",
+                    "y": 90
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "south",
+                "up": true,
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_cross",
+                    "y": 180
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "west",
+                "up": true,
+                "down": true
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_cross",
+                    "y": 270
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,92 @@
+{
+    "multipart": [
+        {
+            "when": {
+                "facing": "north"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket"
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "east"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket",
+                    "y": 90
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "south"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket",
+                    "y": 180
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "west"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket",
+                    "y": 270
+                }
+            ]
+        },
+
+
+        {
+            "when": {
+                "facing": "north"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_bracket"
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "east"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_bracket",
+                    "y": 90
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "south"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_bracket",
+                    "y": 180
+                }
+            ]
+        },
+        {
+            "when": {
+                "facing": "west"
+            },
+            "apply": [
+                {
+                    "model": "pantographsandwires:block/cantilever_bracket_bracket",
+                    "y": 270
+                }
+            ]
+        }
+    ]
+}
