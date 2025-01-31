@@ -3,6 +3,7 @@ package de.mrjulsen.paw.event;
 import de.mrjulsen.paw.PantographsAndWires;
 import de.mrjulsen.wires.item.WireBaseItem;
 import de.mrjulsen.wires.render.WireRenderer;
+import de.mrjulsen.wires.WireClientNetwork;
 import de.mrjulsen.wires.WireNetwork;
 import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientLifecycleEvent;
@@ -29,6 +30,7 @@ public final class ModClientEvents {
                 return;
             }
             lines.add(WireNetwork.debug_text());
+            lines.add(WireClientNetwork.debug_text());
         });
 
         ClientLifecycleEvent.CLIENT_STARTED.register((mc) -> {        
@@ -41,7 +43,7 @@ public final class ModClientEvents {
         });
 
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register((server) -> {
-            WireNetwork.clear();
+            WireClientNetwork.clear();
         });
 
         ClientGuiEvent.RENDER_HUD.register((graphics, ticks) -> {

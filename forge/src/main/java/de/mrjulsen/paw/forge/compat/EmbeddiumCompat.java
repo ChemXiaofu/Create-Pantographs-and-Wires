@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import de.mrjulsen.wires.render.WireSegmentRenderDataBatch;
-import de.mrjulsen.wires.WireNetwork;
+import de.mrjulsen.wires.WireClientNetwork;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -23,7 +23,7 @@ public class EmbeddiumCompat {
     }
 	
     static void meshAppendEvent(ChunkMeshEvent event) {
-        if (WireNetwork.hasConnectionsInSection(event.getSectionOrigin())) {
+        if (WireClientNetwork.hasConnectionsInSection(event.getSectionOrigin())) {
 			event.addMeshAppender(c -> {
                 renderConnectionsInSection(c.vertexConsumerProvider(), c.sodiumBuildBuffers(), c.blockRenderView(), c.sectionOrigin());
             });
@@ -33,7 +33,7 @@ public class EmbeddiumCompat {
     public static void renderConnectionsInSection(Function<RenderType, VertexConsumer> layers, ChunkBuildBuffers buffers, BlockAndTintGetter region, SectionPos origin) {
 		BlockPos chunkOrigin = origin.origin();
 		SectionPos chunkSection = SectionPos.of(chunkOrigin);
-		if (!WireNetwork.hasConnectionsInSection(chunkSection)) {
+		if (!WireClientNetwork.hasConnectionsInSection(chunkSection)) {
 			return;
 		}
 
@@ -41,7 +41,7 @@ public class EmbeddiumCompat {
 		VertexConsumer vertexConsumer = layers.apply(renderType);
 		PoseStack poseStack = new PoseStack();
 
-		Collection<WireSegmentRenderDataBatch> connections = WireNetwork.connectionsInSection(chunkSection);
+		Collection<WireSegmentRenderDataBatch> connections = WireClientNetwork.connectionsInSection(chunkSection);
 
 		for (WireSegmentRenderDataBatch connection : connections) {
 			connection.render(vertexConsumer);

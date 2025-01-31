@@ -9,7 +9,7 @@ import de.mrjulsen.paw.PantographsAndWires;
 import de.mrjulsen.paw.mixin.client.CompiledChunkAccess;
 import de.mrjulsen.paw.mixin.client.RenderChunkAccess;
 import de.mrjulsen.paw.util.CompiledChunkExtension;
-import de.mrjulsen.wires.WireNetwork;
+import de.mrjulsen.wires.WireClientNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ChunkBufferBuilderPack;
 import net.minecraft.client.renderer.RenderType;
@@ -43,11 +43,11 @@ public class WireRenderer implements ResourceManagerReloadListener {
 	public static void renderConnectionsInSection(Set<RenderType> layers, ChunkBufferBuilderPack buffers, BlockAndTintGetter region, RenderChunk renderChunk) {
 		BlockPos chunkOrigin = renderChunk.getOrigin();
 		SectionPos chunkSection = SectionPos.of(chunkOrigin);
-		if (!WireNetwork.hasConnectionsInSection(chunkSection)) {
+		if (!WireClientNetwork.hasConnectionsInSection(chunkSection)) {
 			return;
 		}
 
-		RenderType renderType = RenderType.solid();//ModRenderType.WIRE;
+		RenderType renderType = RenderType.solid();
 		BufferBuilder builder = buffers.builder(renderType);
 		CompiledChunkAccess compiledAccess = (CompiledChunkAccess)renderChunk.compiled.get();
 		if(layers.add(renderType)) {
@@ -57,7 +57,7 @@ public class WireRenderer implements ResourceManagerReloadListener {
 		VertexConsumer vertexConsumer = builder;
 		PoseStack poseStack = new PoseStack();
 
-		Collection<WireSegmentRenderDataBatch> connections = WireNetwork.connectionsInSection(chunkSection);
+		Collection<WireSegmentRenderDataBatch> connections = WireClientNetwork.connectionsInSection(chunkSection);
 
 		for (WireSegmentRenderDataBatch connection : connections) {
 			connection.render(vertexConsumer);

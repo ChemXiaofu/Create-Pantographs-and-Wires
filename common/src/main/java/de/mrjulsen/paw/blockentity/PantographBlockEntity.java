@@ -16,6 +16,7 @@ import com.simibubi.create.foundation.utility.animation.LerpedFloat.Chaser;
 
 import de.mrjulsen.paw.util.Const;
 import de.mrjulsen.wires.WireNetwork;
+import de.mrjulsen.wires.WireClientNetwork;
 import de.mrjulsen.wires.WireCollision.WireBlockCollision;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -205,7 +206,7 @@ public class PantographBlockEntity extends SmartBlockEntity implements GeoBlockE
         boolean hasWire = false;
         while (poses.hasNext()) {
             BlockPos pos = poses.next();
-            if (WireNetwork.hasConnectionsInBlock(pos)) {
+            if (WireClientNetwork.hasConnectionsInBlock(pos)) {
                 for (WireBlockCollision c : WireNetwork.getCollisionsInBlock(pos)) {
                     Vector3d d = checkWireIntersection(
                         new Vector3d(c.absA().x, c.absA().y, c.absA().z),
@@ -234,7 +235,7 @@ public class PantographBlockEntity extends SmartBlockEntity implements GeoBlockE
         Iterator<BlockPos> poses = findIntersectingBlocks(pA, pB, upVec).iterator();
         while (poses.hasNext()) {
             BlockPos pos = poses.next();
-            if (WireNetwork.hasConnectionsInBlock(pos)) {
+            if (WireClientNetwork.hasConnectionsInBlock(pos)) {
                 for (WireBlockCollision c : WireNetwork.getCollisionsInBlock(pos)) {
                     Vector3d d = checkWireIntersection(
                         new Vector3d(c.absA().x, c.absA().y, c.absA().z),
