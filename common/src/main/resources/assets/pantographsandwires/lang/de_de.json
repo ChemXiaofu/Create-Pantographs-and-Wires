@@ -20,11 +20,11 @@
     "block.pantographsandwires.cantilever_bracket": "Rohrauslegerachse",
     "block.pantographsandwires.cantilever_bracket_vertical": "Hängejoch",
     "block.pantographsandwires.cantilever_bracket_at_post": "Rohrauslegerachse (Mastverbindung)",
-    "block.pantographsandwires.power_line_bracket": "Energieleitungshalterung",
+    "block.pantographsandwires.power_line_bracket": "Bahnstromleitungshalterung",
 
     "item.pantographsandwires.cantilever": "Ausleger",
     "item.pantographsandwires.catenary_wire": "Kettenfahrleitung",
-    "item.pantographsandwires.power_wire": "Energiekabel",
+    "item.pantographsandwires.power_wire": "Bahnenergieleitung",
     "item.pantographsandwires.wire.connection_not_loaded": "Einer der Verbindungspunkte ist nicht geladen.",
     "item.pantographsandwires.wire.connector_invalid": "Einer der Verbindungspunkte ist ungültig.",
     "item.pantographsandwires.wire.same_connector": "Kann nicht mit dem selben Verbindungspunkt verbunden werden.",
