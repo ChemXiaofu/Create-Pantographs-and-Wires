@@ -371,7 +371,7 @@ public class ObjGen {
         List<ObjObject> os = ObjObject.loadSample(wireArmModelPath);
         for (int n = 0; n < os.size(); n++) {
             ObjObject o = os.get(n);
-            o.translate(new Vector3d(xOffset, cantileverWidth < 3 ? 0.5f : (cantileverWidth >= 5 ? -1 : 0), -cantileverWidth + 3));
+            o.translate(new Vector3d(xOffset, cantileverWidth < 3 ? 0.5f : (cantileverWidth >= 6 ? -1 : 0), -cantileverWidth + 3));
             if (n != 0) {
                 obj.objects.add(o);
                 continue;
