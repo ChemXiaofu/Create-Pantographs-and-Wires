@@ -1,34 +1,33 @@
-package de.mrjulsen.paw.forge.compat;
+package de.mrjulsen.paw.compat.sodium;
 
 import java.util.Collection;
 import java.util.function.Function;
 
-import org.embeddedt.embeddium.api.ChunkMeshEvent;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import de.mrjulsen.wires.render.WireSegmentRenderDataBatch;
 import de.mrjulsen.wires.WireClientNetwork;
+import de.mrjulsen.wires.render.WireSegmentRenderDataBatch;
+import dev.architectury.event.Event;
+import dev.architectury.event.EventFactory;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 
-public class EmbeddiumCompat {
-    
-    public static void register() {
-        ChunkMeshEvent.BUS.addListener(EmbeddiumCompat::meshAppendEvent);
-    }
-	
-    static void meshAppendEvent(ChunkMeshEvent event) {
-        if (WireClientNetwork.hasConnectionsInSection(event.getSectionOrigin())) {
-			event.addMeshAppender(c -> {
+public class SodiumCompatEvent {
+    public static final Event<MeshAppender> CHUNK_MESHING_EVENT = EventFactory.createEventResult();
+
+    public static void init() {
+        SodiumCompatEvent.CHUNK_MESHING_EVENT.register(c -> {
+            if (WireClientNetwork.hasConnectionsInSection(c.sectionOrigin())) {
                 renderConnectionsInSection(c.vertexConsumerProvider(), c.sodiumBuildBuffers(), c.blockRenderView(), c.sectionOrigin());
-            });
-        }
+            }
+        });
     }
+
+    
 
     public static void renderConnectionsInSection(Function<RenderType, VertexConsumer> layers, ChunkBuildBuffers buffers, BlockAndTintGetter region, SectionPos origin) {
 		BlockPos chunkOrigin = origin.origin();

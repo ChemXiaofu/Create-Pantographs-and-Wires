@@ -35,6 +35,8 @@ dependencies {
     modImplementation(include("de.mrjulsen.mcdragonlib:dragonlib-fabric:${rootProject.minecraft_version}-${rootProject.dragonlib_version}"))    
     modImplementation(include("software.bernie.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft_version}:${rootProject.geckolib_fabric_version}"))
     modImplementation(include("com.eliotlash.mclib:mclib:20"))
+    modImplementation("maven.modrinth:sodium:mc1.20.1-0.5.11")
+    modImplementation("maven.modrinth:indium:1.0.34+mc1.20.1")
     
     modImplementation("com.simibubi.create:create-fabric-${rootProject.minecraft_version}:${rootProject.create_fabric_version}")
 

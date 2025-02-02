@@ -1,10 +1,14 @@
 {
   "required": true,
   "package": "de.mrjulsen.paw.mixin",
-  "plugin": "de.mrjulsen.paw.mixin.ext.MixinConfig",
+  "plugin": "de.mrjulsen.paw.mixin.MixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "client": [
+    "sodium.ChunkBuilderMeshingTaskMixin",
+    "sodium.RenderSectionManagerMixin",
+    "sodium.WorldSliceMixin",
+    
     "client.RebuildTaskMixin",
     "client.CompiledChunkAccess",
     "client.CompiledChunkMixin",

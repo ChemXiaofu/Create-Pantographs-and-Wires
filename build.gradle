@@ -38,6 +38,7 @@ subprojects {
         maven { url = "https://jitpack.io/" } // Mixin Extras, Fabric ASM
         maven { url = "https://maven.tterrag.com/" } // Flywheel
         maven { url = "https://maven.blamejared.com" } // Embeddium
+        maven { url = "https://api.modrinth.com/maven" } // Modrinth
         maven { url = "https://cursemaven.com"
             content {
                 includeGroup "curse.maven"

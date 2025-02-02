@@ -174,7 +174,7 @@ public final class WireClientNetwork {
         clearConnectionCaches();
 
         for (SectionPos section : sectionsIn) {
-            Minecraft.getInstance().levelRenderer.setSectionDirty(section.getX(), section.getY(), section.getZ());
+            setSectionDirty(section);
         }
     }
 
@@ -200,7 +200,7 @@ public final class WireClientNetwork {
         
         for (WireSegmentRenderDataBatch batch : renderdata) {
             SectionPos section = batch.getSection();
-            Minecraft.getInstance().levelRenderer.setSectionDirty(section.getX(), section.getY(), section.getZ());
+            setSectionDirty(section);
         }
     }
 
@@ -219,6 +219,12 @@ public final class WireClientNetwork {
                 removeClientConnection(id);
             }
         }
+    }
+
+    private static void setSectionDirty(SectionPos pos) {
+        Minecraft.getInstance().execute(() -> {            
+            Minecraft.getInstance().levelRenderer.setSectionDirty(pos.getX(), pos.getY(), pos.getZ());
+        });
     }
    
 }
