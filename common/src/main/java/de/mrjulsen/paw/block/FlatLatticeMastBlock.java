@@ -8,6 +8,7 @@ import de.mrjulsen.mcdragonlib.data.MapCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -62,5 +63,10 @@ public class FlatLatticeMastBlock extends AbstractMultipartPostBlock {
     @Override
     public EPostType postConnectionType(LevelReader level, BlockState state, BlockPos pos, BlockState cantileverState, BlockPos cantileverPos) {
         return EPostType.WALL;
+    }
+
+    @Override
+    public boolean canCantileverConnect(BlockAndTintGetter level, BlockPos pos, BlockState state, Direction direction) {
+        return direction.getAxis() == state.getValue(FACING).getAxis();
     }
 }

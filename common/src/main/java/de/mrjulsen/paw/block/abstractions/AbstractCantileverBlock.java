@@ -217,6 +217,7 @@ public abstract class AbstractCantileverBlock extends AbstractRotatableWireConne
         BlockState supportState = level.getBlockState(relativePos);
         return
             (supportState.is(getSupportBlockTag()) || supportState.isFaceSturdy(level, relativePos, direction.getOpposite())) &&
+            (!(supportState.getBlock() instanceof ICantileverConnectableBlock c) || c.canCantileverConnect(level, relativePos, supportState, direction)) &&
             (supportState.getBlock() instanceof AbstractRotatableBlock ? (int)getRelativeYRotation(supportState) : 0) == (int)getRelativeYRotation(state)
         ;
     }
