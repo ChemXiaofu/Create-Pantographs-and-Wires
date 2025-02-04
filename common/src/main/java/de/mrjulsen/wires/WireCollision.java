@@ -100,11 +100,13 @@ public class WireCollision {
                 currentPoint = new Vec3(originSection.getX() + v.x, originSection.getY() + v.y, originSection.getZ() + v.z);
                 if (lastBlock == null || !lastBlock.equals(newPos)) {
                     if (lastBlock != null && lastPoint != null) {
-                        blocks.put(lastBlock, new WireBlockCollision(
-                            lastBlock,
-                            lastPoint.subtract(lastBlock.getX(), lastBlock.getY(), lastBlock.getZ()),
-                            currentPoint.subtract(lastBlock.getX(), lastBlock.getY(), lastBlock.getZ())
-                        ));
+                        final BlockPos fLastPos = lastBlock;
+                        final Vec3 fLastPoint = lastPoint;
+                        final Vec3 fCurrentPoint = currentPoint;
+                        blocks.computeIfAbsent(fLastPos, x -> new WireBlockCollision(
+                            fLastPos,
+                            fLastPoint.subtract(fLastPos.getX(), fLastPos.getY(), fLastPos.getZ())
+                        )).setSecondPoint(fCurrentPoint.subtract(fLastPos.getX(), fLastPos.getY(), fLastPos.getZ()));
                     }
                     
                     lastPoint = currentPoint;
@@ -115,11 +117,13 @@ public class WireCollision {
         }
 
         if (lastBlock != null && lastPoint != null) {
-            blocks.put(lastBlock, new WireBlockCollision(
-                lastBlock,
-                lastPoint.subtract(lastBlock.getX(), lastBlock.getY(), lastBlock.getZ()),
-                currentPoint.subtract(lastBlock.getX(), lastBlock.getY(), lastBlock.getZ())
-            ));
+            final BlockPos fLastPos = lastBlock;
+            final Vec3 fLastPoint = lastPoint;
+            final Vec3 fCurrentPoint = currentPoint;
+            blocks.computeIfAbsent(fLastPos, x -> new WireBlockCollision(
+                fLastPos,
+                fLastPoint.subtract(fLastPos.getX(), fLastPos.getY(), fLastPos.getZ())
+            )).setSecondPoint(fCurrentPoint.subtract(fLastPos.getX(), fLastPos.getY(), fLastPos.getZ()));
         }
 
         return blocks;
@@ -151,22 +155,34 @@ public class WireCollision {
     public static class WireBlockCollision {
         private final BlockPos pos;
         private final Vec3 entryPointA;
-        private final Vec3 entryPointB;
+        private Vec3 entryPointB;
 
         private final Cache<Vec3> absA;
         private final Cache<Vec3> absB;
 
-        public WireBlockCollision(BlockPos pos, Vec3 entryPointA, Vec3 entryPointB) {
+        public WireBlockCollision(BlockPos pos, Vec3 entryPointA) {
             this.pos = pos;
-            this.entryPointA = new Vec3(bounds(entryPointA.x), entryPointA.y, bounds(entryPointA.z));
-            this.entryPointB = new Vec3(bounds(entryPointB.x), entryPointB.y, bounds(entryPointB.z));
-
+            this.entryPointA = new Vec3(bounds(entryPointA.x), bounds(entryPointA.y), bounds(entryPointA.z));
             this.absA = new Cache<>(() -> this.entryPointA.add(pos.getX(), pos.getY(), pos.getZ()));
             this.absB = new Cache<>(() -> this.entryPointB.add(pos.getX(), pos.getY(), pos.getZ()));
         }
 
+        public WireBlockCollision(BlockPos pos, Vec3 entryPointA, Vec3 entryPointB) {
+            this(pos, entryPointA);
+            this.entryPointB = new Vec3(bounds(entryPointB.x), bounds(entryPointB.y), bounds(entryPointB.z));
+            this.absA.clear();
+            this.absB.clear();
+        }
+
+        public WireBlockCollision setSecondPoint(Vec3 oEntryPointB) {
+            this.entryPointB = new Vec3(bounds(oEntryPointB.x), bounds(oEntryPointB.y), bounds(oEntryPointB.z));
+            this.absA.clear();
+            this.absB.clear();
+            return this;
+        }
+
         private static double bounds(double v) {
-            return v <= Const.PIXEL ? 0 : (1D - v <= Const.PIXEL ? 1 : v);
+            return v <= Const.PIXEL ? 0 : (v >= 1D - Const.PIXEL ? 1 : v);
         }
 
         @Override
