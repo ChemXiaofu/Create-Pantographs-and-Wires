@@ -59,6 +59,15 @@ public abstract class AbstractRotatableWireConnectorBlock<T extends WireConnecto
         return nbt;
     }
     
+    /**
+     * The relative coordinates where a wire should be attached to.
+     * @param level The current level.
+     * @param pos The pos of the connector block.
+     * @param state The state of the connector block.
+     * @param itemData Additional data stored in the wire item created while placing it.
+     * @param firstPoint Whether this is the first or second connector block
+     * @return The relative coordinates from the block's center.
+     */
     protected abstract Vec3 defaultWireAttachPoint(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint);
     
     @FunctionalInterface

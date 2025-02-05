@@ -95,7 +95,7 @@ public interface IRotatableBlock {
     BlockHitResult checkClickedFace(Level level, Player player, BlockHitResult original);
 
     /**
-     * The offset by which the block is moved from its original position.
+     * The offset by which the block is moved from its original position. This value is not affected by any rotation transformation.
      * @param level The level the block is placed in.
      * @param pos The position of the block.
      * @param state The blockstate.

@@ -2,7 +2,8 @@ package de.mrjulsen.paw.blockentity;
 
 import de.mrjulsen.wires.block.WireConnectorBlockEntity;
 import de.mrjulsen.mcdragonlib.util.MathUtils;
-import de.mrjulsen.paw.block.abstractions.AbstractCantileverBlock;
+import de.mrjulsen.paw.block.abstractions.AbstractRotatableBlock;
+import de.mrjulsen.paw.block.abstractions.IMultiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -11,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class CantileverBlockEntity extends WireConnectorBlockEntity implements IMultiblockBlockEntity {
+public class MultiblockWireConnectorBlockEntity extends WireConnectorBlockEntity implements IMultiblockBlockEntity {
 
     private static final String NBT_X_SIZE = "XSize";
     private static final String NBT_Y_SIZE = "YSize";
@@ -27,10 +28,10 @@ public class CantileverBlockEntity extends WireConnectorBlockEntity implements I
 
     private BlockPos rootPos;
 
-    public CantileverBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public MultiblockWireConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        if (getBlockState().getBlock() instanceof AbstractCantileverBlock cantilever) {
-            Vec3 vec = cantilever.multiblockSize();
+        if (getBlockState().getBlock() instanceof IMultiblock mb) {
+            Vec3 vec = mb.multiblockSize();
             maxXSize = (int)vec.x;
             maxYSize = (int)vec.y;
             maxZSize = (int)vec.z;
@@ -50,7 +51,7 @@ public class CantileverBlockEntity extends WireConnectorBlockEntity implements I
     }
 
     public int getDistanceToRoot() {
-        Direction direction = getBlockState().getValue(AbstractCantileverBlock.FACING);
+        Direction direction = getBlockState().getValue(AbstractRotatableBlock.FACING);
         return direction.getAxis() == Axis.X ? Math.abs(rootPos.getX() - getBlockPos().getX()) : Math.abs(rootPos.getZ() - getBlockPos().getZ());
     }
 
@@ -69,9 +70,9 @@ public class CantileverBlockEntity extends WireConnectorBlockEntity implements I
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        xOffset = MathUtils.clamp(nbt.getInt(NBT_X_SIZE), 0, maxXSize);
-        yOffset = MathUtils.clamp(nbt.getInt(NBT_Y_SIZE), 0, maxYSize);
-        zOffset = MathUtils.clamp(nbt.getInt(NBT_Z_SIZE), 0, maxZSize);
+        xOffset = MathUtils.clamp(nbt.getInt(NBT_X_SIZE), 0, maxXSize - 1);
+        yOffset = MathUtils.clamp(nbt.getInt(NBT_Y_SIZE), 0, maxYSize - 1);
+        zOffset = MathUtils.clamp(nbt.getInt(NBT_Z_SIZE), 0, maxZSize - 1);
     }
 
     @Override
@@ -106,9 +107,9 @@ public class CantileverBlockEntity extends WireConnectorBlockEntity implements I
 
     @Override
     public void setOffset(int x, int y, int z) {
-        this.xOffset = MathUtils.clamp(x, 1, maxXSize);
-        this.yOffset = MathUtils.clamp(y, 1, maxYSize);
-        this.zOffset = MathUtils.clamp(z, 1, maxZSize);
+        this.xOffset = MathUtils.clamp(x, 0, maxXSize - 1);
+        this.yOffset = MathUtils.clamp(y, 0, maxYSize - 1);
+        this.zOffset = MathUtils.clamp(z, 0, maxZSize - 1);
         notifyUpdate();
     }    
 }

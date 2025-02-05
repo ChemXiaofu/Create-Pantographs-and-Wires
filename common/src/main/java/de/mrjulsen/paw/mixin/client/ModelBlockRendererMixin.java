@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import de.mrjulsen.paw.client.model.BakedModelExtension;
+import dev.architectury.injectables.annotations.PlatformOnly;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -19,17 +20,11 @@ import net.minecraft.world.level.block.state.BlockState;
 @Mixin(ModelBlockRenderer.class)
 public class ModelBlockRendererMixin {
     
+    @PlatformOnly(PlatformOnly.FABRIC)
     @Inject(method = "tesselateBlock", at = @At(value = "HEAD"))
-    public void onTesselateBlockPre(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource random, long seed, int packedOverlay, CallbackInfo ci) {
+    public void onTesselateBlockPreFabric(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource random, long seed, int packedOverlay, CallbackInfo ci) {
         if (model instanceof BakedModelExtension ext) {
             ext.setAdditionalData(level, pos);
-        }
-    }
-
-    @Inject(method = "tesselateBlock", at = @At(value = "TAIL"))
-    public void onTesselateBlockPost(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource random, long seed, int packedOverlay, CallbackInfo ci) {
-        if (model instanceof BakedModelExtension ext) {
-            ext.clearAdditionalData();
         }
     }
 }

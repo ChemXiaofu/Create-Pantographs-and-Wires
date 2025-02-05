@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import de.mrjulsen.paw.block.extended.BlockPlaceContextExtension;
 import de.mrjulsen.paw.block.property.ECantileverConnectionType;
-import de.mrjulsen.paw.blockentity.CantileverBlockEntity;
+import de.mrjulsen.paw.blockentity.MultiblockWireConnectorBlockEntity;
 import de.mrjulsen.paw.client.gui.ModGuiIcons;
 import de.mrjulsen.paw.client.gui.widgets.IIconEnum;
 import de.mrjulsen.paw.registry.ModBlockEntities;
@@ -13,18 +13,14 @@ import de.mrjulsen.paw.util.Utils;
 import de.mrjulsen.mcdragonlib.core.ITranslatableEnum;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,11 +29,10 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public abstract class AbstractCantileverBlock extends AbstractRotatableWireConnectorBlock<CantileverBlockEntity> implements ICatenaryWireConnector {
+public abstract class AbstractCantileverBlock extends AbstractSupportedRotatableWireConnectorBlock<MultiblockWireConnectorBlockEntity> implements ICatenaryWireConnector, IMultiblock {
 
     public static final byte MIN_SIZE = 3;
     public static final byte MAX_SIZE = 7;
@@ -117,8 +112,6 @@ public abstract class AbstractCantileverBlock extends AbstractRotatableWireConne
         }
     }
 
-    public static final String NBT_TENSION_WIRE_ATTACH_POINT = "TensionWireAttachPoint";
-
     public static final EnumProperty<ECantileverConnectionType> CONNECTION = EnumProperty.create("connection", ECantileverConnectionType.class);
     public static final EnumProperty<ECantileverRegistrationArmType> REGISTRATION_ARM = EnumProperty.create("registration_arm", ECantileverRegistrationArmType.class);
     public static final EnumProperty<ECantileverInsulatorsPlacement> INSULATORS_PLACEMENT = EnumProperty.create("insulator_placement", ECantileverInsulatorsPlacement.class);
@@ -142,8 +135,8 @@ public abstract class AbstractCantileverBlock extends AbstractRotatableWireConne
     }
 
     @Override
-    public Class<CantileverBlockEntity> getBlockEntityClass() {
-        return CantileverBlockEntity.class;
+    public Class<MultiblockWireConnectorBlockEntity> getBlockEntityClass() {
+        return MultiblockWireConnectorBlockEntity.class;
     }
 
     public BlockState copyProperties(BlockState src, BlockState target) {        
@@ -166,60 +159,22 @@ public abstract class AbstractCantileverBlock extends AbstractRotatableWireConne
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState state = super.getStateForPlacement(context);
         BlockPlaceContextExtension ctxExt = (BlockPlaceContextExtension)(Object)context;
-        Direction direction = context.getClickedFace();
-        BlockPos clickPos = context.getClickedPos().relative(direction.getOpposite());
-        Level level = context.getLevel();
-        BlockState clickedState = level.getBlockState(clickPos);
-
-        BlockState state = super.defaultBlockState();
-        Direction targetDir = direction;
-        int targetRotationIdx = 0;
         Optional<ECantileverConnectionType> connectionType = ECantileverConnectionType.getFirstForState(ctxExt.getPlacedOnState());
 
-        if (direction.getAxis() != Axis.Y &&
-            clickedState.getBlock() instanceof AbstractRotatableBlock
-        ) {
-            targetDir = direction;
-            targetRotationIdx = clickedState.getValue(ROTATION);
-        } else if (direction.getAxis() != Axis.Y && (connectionType.isPresent() || ctxExt.getPlacedOnState().isFaceSturdy(level, ctxExt.getPlacedOnPos(), context.getClickedFace()))) {
-            targetDir = context.getClickedFace();
-            targetRotationIdx = 1;
-        } else {
-            int rot = (Mth.floor((double)((180.0F + context.getRotation()) * (float)TOTAL_ROTATION_STEPS / 360.0F) + 0.5) & (TOTAL_ROTATION_STEPS - 1));
-            final int steps = TOTAL_ROTATION_STEPS / 4;
-            Direction dir = Direction.from2DDataValue((rot + (steps / 2)) / 4);
-
-            targetDir = dir;
-            targetRotationIdx = steps - 1 - ((rot + (steps / 2)) % 4);
-        }
-
         state = state
-            .setValue(FACING, targetDir)
-            .setValue(ROTATION, targetRotationIdx)
             .setValue(CONNECTION, connectionType.orElse(ECantileverConnectionType.PX16))
         ;
-        return state;        
-    }    
-
-    @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
-        return !this.canSurvive(state, level, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, neighborState, level, currentPos, neighborPos);
+        return state;
     }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         Direction direction = state.getValue(FACING);
-        BlockPos relativePos = pos.relative(direction.getOpposite());
-        if (getRelativeYRotation(state) > 30 && level.getBlockState(pos).getBlock() instanceof AbstractCantileverBlock) {
-            relativePos = relativePos.relative(direction.getClockWise());
-        }        
+        BlockPos relativePos = getSupportBlockPos(level, pos, state);
         BlockState supportState = level.getBlockState(relativePos);
-        return
-            (supportState.is(getSupportBlockTag()) || supportState.isFaceSturdy(level, relativePos, direction.getOpposite())) &&
-            (!(supportState.getBlock() instanceof ICantileverConnectableBlock c) || c.canCantileverConnect(level, relativePos, supportState, direction)) &&
-            (supportState.getBlock() instanceof AbstractRotatableBlock ? (int)getRelativeYRotation(supportState) : 0) == (int)getRelativeYRotation(state)
-        ;
+        return super.canSurvive(state, level, pos) && (!(supportState.getBlock() instanceof ICantileverConnectableBlock c) || c.canCantileverConnect(level, relativePos, supportState, direction));
     }
 
     protected TagKey<Block> getSupportBlockTag() {
@@ -243,7 +198,7 @@ public abstract class AbstractCantileverBlock extends AbstractRotatableWireConne
     }
 
     @Override
-    public BlockEntityType<? extends CantileverBlockEntity> getBlockEntityType() {
+    public BlockEntityType<? extends MultiblockWireConnectorBlockEntity> getBlockEntityType() {
        return ModBlockEntities.CANTILEVER_BLOCK_ENTITY.get();
     }
 
@@ -253,24 +208,9 @@ public abstract class AbstractCantileverBlock extends AbstractRotatableWireConne
     }
 
     @Override
-    public Vec2 getOffset(BlockGetter level, BlockPos pos, BlockState state) {
-        if (state.getValue(ROTATION) < PROPERTY_MAX_ROTATION_INDEX) {
-            return new Vec2(0, 0);
-        }
-        return switch (state.getValue(FACING)) {
-            case WEST  -> new Vec2(0, -1);
-            case EAST  -> new Vec2(0, 1);
-            case SOUTH -> new Vec2(-1, 0);
-            default    -> new Vec2(1, 0);
-        };
-    }
-
-    @Override
     public CompoundTag wireRenderData(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint) {
         CompoundTag nbt = super.wireRenderData(level, pos, state, itemData, firstPoint);
         Utils.putNbtVec3(nbt, NBT_TENSION_WIRE_ATTACH_POINT, transformWireAttachPoint(level, pos, state, itemData, firstPoint, this::tensionWireAttachPoint));
         return nbt;
     }
-
-    public abstract Vec3 multiblockSize();
 }
