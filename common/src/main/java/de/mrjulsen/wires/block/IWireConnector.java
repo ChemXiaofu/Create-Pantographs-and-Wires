@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -28,4 +29,8 @@ public interface IWireConnector {
     default void onPlaceWireOn(Level level, BlockPos pos, BlockState state, Player player, UseOnContext hit, CompoundTag itemData, int index) {}
     default void beforeCreateWireConnection(Level level, BlockPos pos, BlockState state, Player player, UseOnContext hit, CompoundTag itemData) {}
     default void afterCreateWireConnection(Level level, BlockPos pos, BlockState state, Player player, UseOnContext hit, CompoundTag itemData) {}
+
+    default boolean canConnectWire(LevelReader level, BlockPos pos, BlockState state) {
+        return true;
+    }
 }

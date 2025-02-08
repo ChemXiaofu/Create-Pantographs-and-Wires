@@ -9,11 +9,13 @@ public final class ModCommonEvents {
     
     public static void init() {
         LifecycleEvent.SERVER_STARTED.register((server) -> {
-            WireNetwork.load();
+            WireNetwork.load(server);
         });
 
         LifecycleEvent.SERVER_LEVEL_SAVE.register((server) -> {
-            WireNetwork.save(server.getServer());
+            if (!server.isClientSide) {
+                WireNetwork.save(server.getServer());
+            }
         });
 
         LifecycleEvent.SERVER_STOPPED.register((server) -> {

@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import de.mrjulsen.paw.block.abstractions.IRotatableBlock;
+import de.mrjulsen.paw.config.ModClientConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
@@ -32,15 +33,18 @@ public class LevelRendererMixin {
     @Inject(method = "renderHitOutline", at = @At(value = "HEAD"), cancellable = true)
     private void onRenderHitOutline(PoseStack poseStack, VertexConsumer consumer, Entity entity, double camX, double camY, double camZ, BlockPos pos, BlockState state, CallbackInfo ci) {
         if (state.getBlock() instanceof IRotatableBlock rot) {
-            Vec2 pivot = rot.rotatedPivotPoint(level, pos, state);
+            Vec2 pivot = rot.rotatedPivotPoint(state);
             poseStack.pushPose();
-            Vec2 offset = rot.getOffset(level, pos, state);
+            Vec2 offset = rot.getOffset(state);
             poseStack.translate((double)pos.getX() - camX, (double)pos.getY() - camY, (double)pos.getZ() - camZ);
             poseStack.translate(pivot.x + offset.x, 0, pivot.y + offset.y);
             poseStack.pushPose();
-            poseStack.mulPose(Axis.YP.rotationDegrees(rot.getRelativeYRotation(state)));
-            renderShape(poseStack, consumer, rot.getBaseShape(state, this.level, pos, CollisionContext.of(entity)), -pivot.x, 0, -pivot.y, 0.0F, 0.0F, 0.0F, 0.4F);
-            //renderShape(poseStack, consumer, state.getShape(this.level, pos, CollisionContext.of(entity)), -pivot.x, 0, -pivot.y, 0.0F, 0.0F, 0.0F, 0.4F);
+            if (ModClientConfig.DEBUG_ORIGINAL_HITBOX.get()) {
+                renderShape(poseStack, consumer, state.getShape(this.level, pos, CollisionContext.of(entity)), -pivot.x, 0, -pivot.y, 0.0F, 0.0F, 0.0F, 0.4F);
+            } else {
+                poseStack.mulPose(Axis.YP.rotationDegrees(rot.getRelativeYRotation(state)));
+                renderShape(poseStack, consumer, rot.getBaseShape(state, this.level, pos, CollisionContext.of(entity)), -pivot.x, 0, -pivot.y, 0.0F, 0.0F, 0.0F, 0.4F);
+            }
             poseStack.popPose();
             poseStack.popPose();
 

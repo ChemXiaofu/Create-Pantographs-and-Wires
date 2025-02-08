@@ -1,7 +1,6 @@
 package de.mrjulsen.paw.item;
 
 import de.mrjulsen.paw.block.TensioningDeviceBlock;
-import de.mrjulsen.paw.block.abstractions.AbstractCantileverBlock;
 import de.mrjulsen.paw.block.abstractions.ICatenaryWireConnector;
 import de.mrjulsen.paw.config.ModServerConfig;
 import de.mrjulsen.paw.util.Utils;
@@ -49,8 +48,8 @@ public class CatenaryWireType extends AbstractWireType {
 		Vec3 end = data.getEndPos();
 		Vec3 contactWireAttachPointA = data.getWireAttachPointA();
 		Vec3 contactWireAttachPointB = data.getWireAttachPointB();
-		Vec3 tensionWireAttachPointA = Utils.getNbtVec3(data.getConnectorAData(), AbstractCantileverBlock.NBT_TENSION_WIRE_ATTACH_POINT);
-		Vec3 tensionWireAttachPointB = Utils.getNbtVec3(data.getConnectorBData(), AbstractCantileverBlock.NBT_TENSION_WIRE_ATTACH_POINT);
+		Vec3 tensionWireAttachPointA = Utils.getNbtVec3(data.getConnectorAData(), ICatenaryWireConnector.NBT_TENSION_WIRE_ATTACH_POINT);
+		Vec3 tensionWireAttachPointB = Utils.getNbtVec3(data.getConnectorBData(), ICatenaryWireConnector.NBT_TENSION_WIRE_ATTACH_POINT);
 
 		float length = (float)Math.abs(end.subtract(start).length());
 		float hang = data.getConnectorAData().contains(TensioningDeviceBlock.NBT_TENSION) || data.getConnectorBData().contains(TensioningDeviceBlock.NBT_TENSION) ? 0.5f : HANG_FAC * length;

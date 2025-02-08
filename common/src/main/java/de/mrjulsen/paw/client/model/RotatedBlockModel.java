@@ -38,9 +38,9 @@ public class RotatedBlockModel extends BakedModelExtension<BakedModel> {
 			return templateQuads;
 
 		double hAngle = rot.getRelativeYRotation(state);
-		Vec2 pivot = rot.rotatedPivotPoint(null, null, state);
+		Vec2 pivot = rot.rotatedPivotPoint(state);
 
-		Vec2 offset = (rot.getOffset(null, null, state));
+		Vec2 offset = (rot.getOffset(state));
 		Vec3 verticalOffset = new Vec3(0.5f, 0.25f, 0.5f).subtract(pivot.x, 0, pivot.y);		
 
 		int size = templateQuads.size();
@@ -52,8 +52,8 @@ public class RotatedBlockModel extends BakedModelExtension<BakedModel> {
 				Vec3 vec = getXYZ(vertexData, j);
 
 				if (state.getBlock() instanceof IConicalShape cone) {
-					Vec2 coneTarget = cone.coneTarget(null, null, state);
-					Vec2 coneOffset = cone.coneOffset(null, null, state);
+					Vec2 coneTarget = cone.coneTarget(state);
+					Vec2 coneOffset = cone.coneOffset(state);
 					double sX = -Math.signum(vec.x - coneTarget.x);
 					double sZ = -Math.signum(vec.z - coneTarget.y);
 	

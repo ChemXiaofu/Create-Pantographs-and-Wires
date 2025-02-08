@@ -6,7 +6,7 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 
 import de.mrjulsen.paw.PantographsAndWires;
-import de.mrjulsen.paw.blockentity.CantileverBlockEntity;
+import de.mrjulsen.paw.blockentity.MultiblockWireConnectorBlockEntity;
 import de.mrjulsen.paw.blockentity.PantographBlockEntity;
 import de.mrjulsen.paw.blockentity.client.PantographBlockRenderer;
 import de.mrjulsen.wires.block.WireConnectorBlockEntity;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Block;
 @SuppressWarnings("unchecked")
 public class ModBlockEntities {
     
-	public static final BlockEntityEntry<CantileverBlockEntity> CANTILEVER_BLOCK_ENTITY;
+	public static final BlockEntityEntry<MultiblockWireConnectorBlockEntity> CANTILEVER_BLOCK_ENTITY;
 	public static final BlockEntityEntry<WireConnectorBlockEntity> WIRE_CONNECTOR_BLOCK_ENTITY;
 
 	public static final BlockEntityEntry<PantographBlockEntity> PANTOGRAPH_BLOCK_ENTITY = PantographsAndWires.REGISTRATE
@@ -29,7 +29,7 @@ public class ModBlockEntities {
 	static {
 
 		CANTILEVER_BLOCK_ENTITY = PantographsAndWires.REGISTRATE
-			.blockEntity("cantilever_block_entity", CantileverBlockEntity::new)
+			.blockEntity("cantilever_block_entity", MultiblockWireConnectorBlockEntity::new)
 			.validBlocks(makeArray(ModBlocks.CANTILEVER_BLOCK_ENTITY_BLOCKS))
 			.register();
 

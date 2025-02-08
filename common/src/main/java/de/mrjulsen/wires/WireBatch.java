@@ -13,6 +13,7 @@ import de.mrjulsen.wires.render.WireSegmentRenderData;
 import de.mrjulsen.wires.render.WireSegmentRenderDataBatch;
 import net.minecraft.core.SectionPos;
 
+/** A collection of several individual wires combined to one cable connection. */
 public class WireBatch {
     private final Set<Wire> subWires = new HashSet<>();
 
@@ -37,10 +38,19 @@ public class WireBatch {
         return points;
     });
 
+    /**
+     * Create a new collection of wires with initial values.
+     * @param mainWire The first wire
+     */
     public WireBatch(Wire mainWire) {
         this.subWires.add(mainWire);        
     }
 
+    /**
+     * Create a new collection of wires with initial values.
+     * @param wires The first wires
+     * @return
+     */
     public static WireBatch of(Wire... wires) {
         if (wires.length <= 0) {
             throw new IllegalArgumentException("At least one wire must be provided!");
@@ -52,6 +62,10 @@ public class WireBatch {
         return batch;
     }
 
+    /**
+     * Add additional wire to this collection.
+     * @param subWire The new wire
+     */
     public void addSubWire(Wire subWire) {
         this.subWires.add(subWire);
     }

@@ -1,9 +1,13 @@
 package de.mrjulsen.paw.event;
 
 import de.mrjulsen.paw.PantographsAndWires;
+import de.mrjulsen.paw.compat.sodium.IncompatabilityScreen;
+import de.mrjulsen.paw.compat.sodium.SodiumCompatEvent;
 import de.mrjulsen.wires.item.WireBaseItem;
 import de.mrjulsen.wires.render.WireRenderer;
+import de.mrjulsen.wires.WireClientNetwork;
 import de.mrjulsen.wires.WireNetwork;
+import dev.architectury.event.CompoundEventResult;
 import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientLifecycleEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
@@ -29,6 +33,7 @@ public final class ModClientEvents {
                 return;
             }
             lines.add(WireNetwork.debug_text());
+            lines.add(WireClientNetwork.debug_text());
         });
 
         ClientLifecycleEvent.CLIENT_STARTED.register((mc) -> {        
@@ -41,7 +46,7 @@ public final class ModClientEvents {
         });
 
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register((server) -> {
-            WireNetwork.clear();
+            WireClientNetwork.clear();
         });
 
         ClientGuiEvent.RENDER_HUD.register((graphics, ticks) -> {
@@ -62,6 +67,16 @@ public final class ModClientEvents {
                 }
             }
         });
+
+        if (PantographsAndWires.isSodiumLoaded()) {
+            SodiumCompatEvent.init();
+
+            if (!PantographsAndWires.isIndiumLoaded()) {
+                ClientGuiEvent.SET_SCREEN.register((screen) -> {
+                    return CompoundEventResult.interruptTrue(new IncompatabilityScreen());
+                });
+            }
+        }
     }
     
 }

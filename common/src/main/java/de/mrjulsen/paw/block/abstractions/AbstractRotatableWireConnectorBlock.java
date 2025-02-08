@@ -40,9 +40,9 @@ public abstract class AbstractRotatableWireConnectorBlock<T extends WireConnecto
      */
     protected Vec3 transformWireAttachPoint(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint, IWireRenderDataCallback func) {
         if (state.getBlock() instanceof IWireConnector && state.getBlock() instanceof IRotatableBlock rot) {
-            Vec2 pivot = rot.getRotationPivotPoint(level, pos, state);
-            Vec2 rotPivot = rot.rotatedPivotPoint(level, pos, state);
-            Vec2 offset = rot.getOffset(level, pos, state);
+            Vec2 pivot = rot.getRotationPivotPoint(state);
+            Vec2 rotPivot = rot.rotatedPivotPoint(state);
+            Vec2 offset = rot.getOffset(state);
             Vec3 result = VecHelper.rotate(func.run(level, pos, state, itemData, firstPoint).subtract(pivot.x, 0, pivot.y), getYRotation(state), Axis.Y)
                 .add(rotPivot.x, 0, rotPivot.y)
                 .add(offset.x, 0, offset.y)
@@ -59,6 +59,15 @@ public abstract class AbstractRotatableWireConnectorBlock<T extends WireConnecto
         return nbt;
     }
     
+    /**
+     * The relative coordinates where a wire should be attached to.
+     * @param level The current level.
+     * @param pos The pos of the connector block.
+     * @param state The state of the connector block.
+     * @param itemData Additional data stored in the wire item created while placing it.
+     * @param firstPoint Whether this is the first or second connector block
+     * @return The relative coordinates from the block's center.
+     */
     protected abstract Vec3 defaultWireAttachPoint(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint);
     
     @FunctionalInterface

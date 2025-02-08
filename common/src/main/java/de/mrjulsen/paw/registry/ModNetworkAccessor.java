@@ -9,7 +9,7 @@ import de.mrjulsen.paw.item.CantileverBlockItem;
 import de.mrjulsen.wires.network.WireChunkLoadingData;
 import de.mrjulsen.wires.network.WiresNetworkSyncData;
 import de.mrjulsen.wires.network.WiresNetworkSyncData.WireSyncDataEntry;
-import de.mrjulsen.wires.WireNetwork;
+import de.mrjulsen.wires.WireClientNetwork;
 import de.mrjulsen.mcdragonlib.util.accessor.DataAccessorType;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -27,7 +27,7 @@ public final class ModNetworkAccessor {
             return WiresNetworkSyncData.fromNbt(nbt.getCompound(DataAccessorType.DEFAULT_NBT_DATA));
         }, (player, in, temp, nbt, iteration) -> {
             for (WireSyncDataEntry syncData : in.syncData()) {
-                WireNetwork.createClientConnection(in.pos(), syncData);
+                WireClientNetwork.createClientConnection(in.pos(), syncData);
             }
             return false;
         }
@@ -44,7 +44,7 @@ public final class ModNetworkAccessor {
         }, (nbt) -> {
             return nbt.getList(DataAccessorType.DEFAULT_NBT_DATA, Tag.TAG_STRING).stream().map(x -> UUID.fromString(((StringTag)x).getAsString())).toArray(UUID[]::new);
         }, (player, in, temp, nbt, iteration) -> {
-            WireNetwork.removeClientConnections(in);
+            WireClientNetwork.removeClientConnections(in);
             return false;
         }
     ));
@@ -55,7 +55,7 @@ public final class ModNetworkAccessor {
         }, (nbt) -> {
             return WireChunkLoadingData.fromNbt(nbt.getCompound(DataAccessorType.DEFAULT_NBT_DATA));
         }, (player, in, temp, nbt, iteration) -> {
-            WireNetwork.onClientChunkLoading(in);
+            WireClientNetwork.onClientChunkLoading(in);
             return false;
         }
     ));

@@ -54,7 +54,7 @@ public class WireBaseItem extends Item {
         BlockState state = level.getBlockState(pos);
         Player player = context.getPlayer();
 
-        if (state.getBlock() instanceof IWireConnector wc && getWireType().isValidConnector(level, pos, wc)/* && level.getBlockEntity(pos) instanceof CantileverBlockEntity*/) {
+        if (state.getBlock() instanceof IWireConnector wc && getWireType().isValidConnector(level, pos, wc) && wc.canConnectWire(level, pos, state)) {
             if (!level.isClientSide) {
                 CompoundTag compound = context.getItemInHand().getOrCreateTag();
                 if (!compound.contains(NBT_POINT_A)) {

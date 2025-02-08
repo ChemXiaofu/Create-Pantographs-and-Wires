@@ -1,11 +1,11 @@
 package de.mrjulsen.paw.block.abstractions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
+import de.mrjulsen.paw.util.Const;
 import de.mrjulsen.paw.util.ModMath;
 import de.mrjulsen.mcdragonlib.util.MathUtils;
 import net.fabricmc.api.EnvType;
@@ -37,10 +37,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public abstract class AbstractRotatableBlock extends Block implements IRotatableBlock {
 
-    private static final record ShapeCache(VoxelShape shape, Vec2[] corners) {}
+    private static final record ShapeCacheEntry(VoxelShape shape, Vec2[] corners) {}
 
-    private static final float EPSILON = 1e-6f;
-
+    protected static final float EPSILON = 1e-6f;
     public static final int ROTATIONS = 2;
     
     public static final int ROTATION_OFFSET = ROTATIONS - 1;
@@ -54,7 +53,7 @@ public abstract class AbstractRotatableBlock extends Block implements IRotatable
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, PROPERTY_MAX_ROTATION_INDEX);
 
-    private final Map<Integer, ShapeCache> shapes = new HashMap<>(); // Cache
+    private final Map<Integer, ShapeCacheEntry> shapes = new ConcurrentHashMap<>(); // Cache
 
     public AbstractRotatableBlock(Properties properties) {
         super(properties);
@@ -141,8 +140,12 @@ public abstract class AbstractRotatableBlock extends Block implements IRotatable
         return state;
 	}
 
-    private ShapeCache getShapeData(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return shapes.computeIfAbsent(Objects.hash(state.getValues().values().toArray(Object[]::new)), x -> calcShape(state, level, pos, context));
+    private ShapeCacheEntry getShapeData(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return shapes.computeIfAbsent(shapeHash(level, pos, state), x -> calcShape(state, level, pos, context));
+    }
+
+    protected int shapeHash(BlockGetter level, BlockPos pos, BlockState state) {
+        return state.hashCode();
     }
 
     @Override
@@ -179,48 +182,33 @@ public abstract class AbstractRotatableBlock extends Block implements IRotatable
     }
 
     @Override
-    public Vec2 rotatedPivotPoint(BlockGetter level, BlockPos pos, BlockState state) {
-        return ModMath.rotateY(getRotationPivotPoint(level, pos, state), rotationOfFacingDirection(state)).add(0.5f);
+    public Vec2 rotatedPivotPoint(BlockState state) {
+        return ModMath.rotateY(getRotationPivotPoint(state), rotationOfFacingDirection(state)).add(0.5f);
     }
 
 
 
-    private ShapeCache calcShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    private ShapeCacheEntry calcShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         VoxelShape base = getBaseShape(state, level, pos, context);
         float angle = -getRelativeYRotation(state);
+        Vec2 pivot = rotatedPivotPoint(state);
 
-        if (state.getValue(ROTATION) == PROPERTY_BASE_ROTATION_INDEX) { // No custom rotation
-            Vec2[] corners = new Vec2[0];
-            List<AABB> aabbs = base.toAabbs();
-            if (!aabbs.isEmpty()) {
-                AABB aabb = aabbs.get(0);
-                corners = new Vec2[] {
-                    new Vec2((float)aabb.minX, (float)aabb.minZ),
-                    new Vec2((float)aabb.maxX, (float)aabb.minZ),
-                    new Vec2((float)aabb.maxX, (float)aabb.maxZ),
-                    new Vec2((float)aabb.minX, (float)aabb.maxZ)
-                };                
-            }
-            return new ShapeCache(base, corners);
-        }
-
-        float minSize = 1F / 16F;
-        Vec2 pivot = rotatedPivotPoint(level, pos, state);
-
-        Vec2 offset = getOffset(level, pos, state);
+        Vec2 offset = getOffset(state);
         List<AABB> aabbs = base.toAabbs();
         List<VoxelShape> shapes = new ArrayList<>();
         Vec2[] finalCorners = new Vec2[0];
         for (AABB aabb : aabbs) {
-            Vec2[] corners = rotateCorners(angle, minSize, pivot, aabb, offset);
+            Vec2[] corners = rotateCorners(angle, Const.PIXEL, pivot, aabb, offset);
             if (finalCorners.length <= 0) finalCorners = corners;
-            List<Vec2[]> rectangles = approximateSquare(corners, minSize);
+
+            List<Vec2[]> rectangles = approximateSquare(corners, angle, Const.PIXEL);
+
             for (Vec2[] rect : rectangles) {
-                shapes.add(Block.box(rect[0].x * 16f, aabb.minY * 16f, rect[0].y * 16f, (rect[1].x + minSize) * 16f, aabb.maxY * 16f, rect[1].y * 16f));
+                shapes.add(Block.box(rect[0].x * 16f, aabb.minY * 16f, rect[0].y * 16f, (rect[1].x + Const.PIXEL) * 16f, aabb.maxY * 16f, rect[1].y * 16f));
             }
         }
 
-        return new ShapeCache(Shapes.or(Shapes.empty(), shapes.toArray(VoxelShape[]::new)).optimize(), finalCorners);
+        return new ShapeCacheEntry(Shapes.or(Shapes.empty(), shapes.toArray(VoxelShape[]::new)).optimize(), finalCorners);
     }
 
     public static Vec2[] rotateCorners(float angle, float minSize, Vec2 pivotPoint, AABB src, Vec2 offset) {        
@@ -231,16 +219,21 @@ public abstract class AbstractRotatableBlock extends Block implements IRotatable
             new Vec2((float)src.minX, (float)src.maxZ)
         };
 
-        float radians = (float) Math.toRadians(angle);
+        float radians = (float)Math.toRadians(angle);
         Vec2[] rotatedSquare = new Vec2[4];
         for (int i = 0; i < 4; i++) {
-            rotatedSquare[i] = rotatePointAroundPivot(square[i], pivotPoint, radians).add(offset);
+            Vec2 v = square[i];
+            if (Math.abs(angle) > EPSILON) {
+                v = rotatePointAroundPivot(v, pivotPoint, radians);
+            }
+            v = v.add(offset);
+            rotatedSquare[i] = v;
         }
 
         return rotatedSquare;
     }
     
-    public static List<Vec2[]> approximateSquare(Vec2[] rotatedCorners, float minSize) {
+    public static List<Vec2[]> approximateSquare(Vec2[] rotatedCorners, float angle, float minSize) {
         float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE;
         float maxX = Float.MIN_VALUE, maxY = Float.MIN_VALUE;
 
@@ -251,7 +244,14 @@ public abstract class AbstractRotatableBlock extends Block implements IRotatable
             if (point.y > maxY) maxY = point.y;
         }
 
+
         List<Vec2[]> rectangles = new ArrayList<>();
+        
+        if (Math.abs(angle) < EPSILON) {
+            rectangles.add(new Vec2[] { new Vec2(minX, minY), new Vec2(maxX, maxY) });
+            return rectangles;
+        }
+
         for (float x = minX; x < maxX; x += minSize) {
             for (float y = minY; y < maxY; y += minSize) {
                 Vec2 rectBottomLeft = new Vec2(x, y);
@@ -394,5 +394,14 @@ public abstract class AbstractRotatableBlock extends Block implements IRotatable
             result = result.relative(direction.getCounterClockWise());
         }
         return result;
+    }
+
+    protected BlockPos getSupportBlockPos(BlockGetter level, BlockPos pos, BlockState state) {        
+        Direction direction = state.getValue(FACING);
+        BlockPos relativePos = pos.relative(direction.getOpposite());
+        if (level.getBlockState(pos).getBlock() instanceof AbstractRotatableBlock && getRelativeYRotation(state) > 30) {
+            relativePos = relativePos.relative(direction.getClockWise());
+        }
+        return relativePos;
     }
 }

@@ -1,17 +1,22 @@
 package de.mrjulsen.paw.block;
 
-import java.util.Objects;
-
-import de.mrjulsen.paw.blockentity.CantileverBlockEntity;
+import de.mrjulsen.paw.blockentity.MultiblockWireConnectorBlockEntity;
 import de.mrjulsen.paw.blockentity.IMultiblockBlockEntity;
-import de.mrjulsen.paw.block.abstractions.AbstractCantileverBlock;
+import de.mrjulsen.paw.block.abstractions.AbstractSupportedRotatableWireConnectorBlock;
+import de.mrjulsen.paw.block.abstractions.ICatenaryWireConnector;
+import de.mrjulsen.paw.block.abstractions.IMultiblock;
+import de.mrjulsen.paw.block.extended.BlockPlaceContextExtension;
+import de.mrjulsen.paw.block.property.ECantileverConnectionType;
+import de.mrjulsen.paw.registry.ModBlockEntities;
 import de.mrjulsen.paw.registry.ModBlocks;
 import de.mrjulsen.paw.util.Const;
 import de.mrjulsen.paw.util.ModMath;
+import de.mrjulsen.paw.util.Utils;
 import de.mrjulsen.mcdragonlib.config.ECachingPriority;
 import de.mrjulsen.mcdragonlib.data.MapCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
@@ -25,54 +30,48 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class TensioningDeviceBlock extends AbstractCantileverBlock {
+public class TensioningDeviceBlock extends AbstractSupportedRotatableWireConnectorBlock<MultiblockWireConnectorBlockEntity> implements ICatenaryWireConnector, IMultiblock {
 
-    public static final int HEIGHT = 6;
+    public static final int HEIGHT = 7;
 
     public static final String NBT_TENSION = "Tension";
 
     public static final BooleanProperty HELPER = BooleanProperty.create("helper");
+    public static final EnumProperty<ECantileverConnectionType> CONNECTION = EnumProperty.create("connection", ECantileverConnectionType.class);
 
-    private static record TransformationShapeKey(Direction direction, BlockState state) {
-        @Override
-        public final boolean equals(Object other) {
-            if (other instanceof TransformationShapeKey o) {
-                return direction().equals(o.direction());
-            }
-            return false;
-        }
-        @Override
-        public final int hashCode() {
-            return Objects.hash(direction());
-        }
-    }
-
-    private static final VoxelShape DEFAULT_SHAPE = Block.box(0.5d, 0, 1.75d, 15.5d, 16, 18);
-    private static final MapCache<VoxelShape, TransformationShapeKey, TransformationShapeKey> shapesCache = new MapCache<>((key) -> {
-        VoxelShape baseShape = DEFAULT_SHAPE;        
-        Direction direction = key.direction();
+    private static final VoxelShape DEFAULT_SHAPE = Block.box(0.5d, 0, -0.25d, 15.5d, 16, 16);
+    private static final MapCache<VoxelShape, BlockState, BlockState> shapesCache = new MapCache<>((state) -> {
+        VoxelShape baseShape = ModMath.moveShape(DEFAULT_SHAPE, new Vec3(0, 0, Const.PIXEL * ((float)(16 - state.getValue(CONNECTION).getIndex()) / 2f)));
+        Direction direction = state.getValue(FACING);        
         VoxelShape shape = ModMath.rotateShape(baseShape, Axis.Y, (int)direction.getOpposite().toYRot());
         return shape;
-    }, TransformationShapeKey::hashCode, ECachingPriority.ALWAYS);
+    }, BlockState::hashCode, ECachingPriority.ALWAYS);
+
 
     public TensioningDeviceBlock(Properties properties) {
-        super(properties);
+        super(properties
+            .offsetType(OffsetType.XYZ)
+        );
         registerDefaultState(this.defaultBlockState()
             .setValue(HELPER, false)
+            .setValue(CONNECTION, ECantileverConnectionType.PX16)
         );
     }
 
     @Override
     protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {        
         super.createBlockStateDefinition(pBuilder);
-        pBuilder.add(HELPER);
+        pBuilder.add(CONNECTION, HELPER);
     }
 
     @Override
@@ -81,23 +80,39 @@ public class TensioningDeviceBlock extends AbstractCantileverBlock {
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {     
-        Level level = context.getLevel();   
-        for (int i = 1; i <= HEIGHT; i++) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {   
+        BlockPlaceContextExtension ext = (BlockPlaceContextExtension)context;  
+        Level level = context.getLevel();        
+        MutableBlockPos refPos = new MutableBlockPos(ext.getPlacedOnPos().getX(), ext.getPlacedOnPos().getY(), ext.getPlacedOnPos().getZ());
+
+        BlockState refState = ext.getPlacedOnState();
+        ECantileverConnectionType refConnectionType = ECantileverConnectionType.getFirstForState(refState).orElse(ECantileverConnectionType.PX16);
+
+        for (int i = 1; i < HEIGHT; i++) {
+            refPos.move(0, -1, 0);
+            BlockState supportState = level.getBlockState(refPos);
+            ECantileverConnectionType connectionType = ECantileverConnectionType.getFirstForState(supportState).orElse(ECantileverConnectionType.PX16);
+            if (refState.getBlock() != supportState.getBlock() && (refConnectionType != connectionType || (refConnectionType == ECantileverConnectionType.PX16 && !supportState.isFaceSturdy(level, refPos, context.getClickedFace())))) {
+                return null;
+            }
             BlockPos p = context.getClickedPos().relative(Direction.DOWN, i);
             if (!level.getBlockState(p).canBeReplaced(context) || level.isOutsideBuildHeight(p)) {
                 return null;
             }
         }
-        return super.getStateForPlacement(context);
+
+        return super.getStateForPlacement(context)
+            .setValue(CONNECTION, ECantileverConnectionType.getFirstForState(ext.getPlacedOnState()).orElse(ECantileverConnectionType.PX16))
+        ;
     }
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        for (int i = 1; i <= HEIGHT; i++) {
-            BlockPos p = pos.relative(Direction.DOWN, i);
-            level.setBlock(p, state.setValue(HELPER, true), 0, 0);
-            if (level.getBlockEntity(p) instanceof CantileverBlockEntity be) {
+        MutableBlockPos refPos = new MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
+        for (int i = 1; i < HEIGHT; i++) {
+            refPos.move(0, -1, 0);
+            level.setBlock(refPos, state.setValue(HELPER, true), 0, 0);
+            if (level.getBlockEntity(refPos) instanceof MultiblockWireConnectorBlockEntity be) {
                 be.setOffset(1, i, 1);
             }
         }
@@ -112,11 +127,27 @@ public class TensioningDeviceBlock extends AbstractCantileverBlock {
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof IMultiblockBlockEntity be) {
             int yOffset = be.getYOffset();
-            BlockPos abovePos = pos.above();
-            BlockPos belowPos = pos.below();
-            boolean b1 = yOffset <= 0 || (level.getBlockState(abovePos).is(this) && level.getBlockEntity(abovePos) instanceof IMultiblockBlockEntity b && b.getYOffset() == yOffset - 1);
-            boolean b2 = yOffset >= be.getYSize() || (level.getBlockState(belowPos).is(this) && level.getBlockEntity(belowPos) instanceof IMultiblockBlockEntity b && b.getYOffset() == yOffset + 1);
+            MutableBlockPos mPos = new MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
+            mPos.move(0, 1, 0);
+            boolean b1 = yOffset <= 0 || (level.getBlockState(mPos).is(this) && level.getBlockEntity(mPos) instanceof IMultiblockBlockEntity b && b.getYOffset() == yOffset - 1);
+            mPos.move(0, -2, 0);
+            boolean b2 = yOffset >= HEIGHT - 1 || (level.getBlockState(mPos).is(this) && level.getBlockEntity(mPos) instanceof IMultiblockBlockEntity b && b.getYOffset() == yOffset + 1);
+            
             if (!b1 || !b2) return false;
+
+            mPos.move(0, 1, 0);
+            BlockPos refPos = getSupportBlockPos(level, mPos, state);
+            BlockState refState = level.getBlockState(refPos);
+            ECantileverConnectionType refConnectionType = ECantileverConnectionType.getFirstForState(refState).orElse(ECantileverConnectionType.PX16);
+            for (int i = yOffset; i < HEIGHT - 1; i++) {
+                mPos.move(0, -1, 0);
+                BlockPos supportPos = getSupportBlockPos(level, mPos, state);
+                BlockState supportState = level.getBlockState(supportPos);
+                ECantileverConnectionType connectionType = ECantileverConnectionType.getFirstForState(supportState).orElse(ECantileverConnectionType.PX16);
+                if (refState.getBlock() != supportState.getBlock() && (refConnectionType != connectionType || (refConnectionType == ECantileverConnectionType.PX16 && !supportState.isFaceSturdy(level, supportPos, state.getValue(FACING).getOpposite())))) {
+                    return false;
+                }
+            }
         }
         return super.canSurvive(state, level, pos);
     }
@@ -128,29 +159,49 @@ public class TensioningDeviceBlock extends AbstractCantileverBlock {
 
     @Override
     public VoxelShape getBaseShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        TransformationShapeKey key = new TransformationShapeKey(state.getValue(FACING), state);
-        return shapesCache.get(key, key);
+        return shapesCache.get(state, state);
     }
 
     @Override
     public Vec3 defaultWireAttachPoint(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint) {
-        return new Vec3(Const.PIXEL * 3.5f - 0.5f, Const.PIXEL * 0.25, Const.PIXEL * 10.25f - 0.5f);
+        return new Vec3(Const.PIXEL * 3.5f - 0.5f, Const.PIXEL * 0.25, Const.PIXEL * 8.25f - 0.5f + (Const.PIXEL * (float)((16 - state.getValue(CONNECTION).getIndex()) / 2f)));
     }
 
     @Override
     public Vec3 tensionWireAttachPoint(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint) {
-        return new Vec3(Const.PIXEL * 12.5f - 0.5f, Const.PIXEL * 10.25f, Const.PIXEL * 10.25f - 0.5f);
+        return new Vec3(Const.PIXEL * 12.5f - 0.5f, Const.PIXEL * 10.25f, Const.PIXEL * 8.25f - 0.5f + (Const.PIXEL * (float)((16 - state.getValue(CONNECTION).getIndex()) / 2f)));
     }
 
     @Override
     public CompoundTag wireRenderData(Level level, BlockPos pos, BlockState state, CompoundTag itemData, boolean firstPoint) {
         CompoundTag nbt = super.wireRenderData(level, pos, state, itemData, firstPoint);
+        Utils.putNbtVec3(nbt, NBT_TENSION_WIRE_ATTACH_POINT, transformWireAttachPoint(level, pos, state, itemData, firstPoint, this::tensionWireAttachPoint));
         nbt.putBoolean(NBT_TENSION, true);
         return nbt;
     }
 
     @Override
+    public Vec2 getRotationPivotPoint(BlockState state) {
+        return new Vec2(0f, 1f);
+    }
+
+    @Override
     public Vec3 multiblockSize() {
         return new Vec3(1, HEIGHT, 1);
+    }
+    
+    @Override
+    public boolean canConnectWire(LevelReader level, BlockPos pos, BlockState state) {
+        return !state.getValue(HELPER);
+    }
+
+    @Override
+    public Class<MultiblockWireConnectorBlockEntity> getBlockEntityClass() {
+        return MultiblockWireConnectorBlockEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends MultiblockWireConnectorBlockEntity> getBlockEntityType() {
+        return ModBlockEntities.CANTILEVER_BLOCK_ENTITY.get();
     }
 }

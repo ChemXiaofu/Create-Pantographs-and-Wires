@@ -1,6 +1,10 @@
 {
     "itemGroup.pantographsandwires.tab": "Create: Pantographs & Wires",
-    
+
+    "gui.pantographsandwires.sodium_error.title": "Create: Pantographs & Wires",
+    "gui.pantographsandwires.sodium_error.subtitle": "Sodium ist installiert, Indium aber nicht!",
+    "gui.pantographsandwires.sodium_error.description": "Diese Mod funktioniert nicht, wenn Sodium ohne Indium installiert ist. Einige Blöcke werden nicht geladen und die Kabel verursachen Abstürze, die das Spiel unspielbar machen. Bitte installiere Indium und starte das Spiel neu.",
+
     "block.pantographsandwires.pantograph": "Pantograf",
     "block.pantographsandwires.tensioning_device": "Radspannwerk",
     "block.pantographsandwires.lattice_mast": "Gittermast",
@@ -20,11 +24,11 @@
     "block.pantographsandwires.cantilever_bracket": "Rohrauslegerachse",
     "block.pantographsandwires.cantilever_bracket_vertical": "Hängejoch",
     "block.pantographsandwires.cantilever_bracket_at_post": "Rohrauslegerachse (Mastverbindung)",
-    "block.pantographsandwires.power_line_bracket": "Energieleitungshalterung",
+    "block.pantographsandwires.power_line_bracket": "Bahnstromleitungshalterung",
 
     "item.pantographsandwires.cantilever": "Ausleger",
     "item.pantographsandwires.catenary_wire": "Kettenfahrleitung",
-    "item.pantographsandwires.power_wire": "Energiekabel",
+    "item.pantographsandwires.power_wire": "Bahnenergieleitung",
     "item.pantographsandwires.wire.connection_not_loaded": "Einer der Verbindungspunkte ist nicht geladen.",
     "item.pantographsandwires.wire.connector_invalid": "Einer der Verbindungspunkte ist ungültig.",
     "item.pantographsandwires.wire.same_connector": "Kann nicht mit dem selben Verbindungspunkt verbunden werden.",
