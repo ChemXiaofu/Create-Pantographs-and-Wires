@@ -1,12 +1,12 @@
 package de.mrjulsen.paw.blockentity.client;
 
-import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
+import de.mrjulsen.paw.block.PantographBlock;
 import de.mrjulsen.paw.blockentity.PantographBlockEntity;
 import de.mrjulsen.paw.util.ClientUtils;
 import de.mrjulsen.wires.debug.WireDebugRenderer;
@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 public class PantographBlockRenderer extends GeoBlockRenderer<PantographBlockEntity> {
@@ -31,9 +32,10 @@ public class PantographBlockRenderer extends GeoBlockRenderer<PantographBlockEnt
         }
         
         poseStack.pushPose();
-        Vector3d offset = new Vector3d(0.5D, 0, 0.5D).add(PantographBlockEntity.FORWARD_OFFSET, PantographBlockEntity.MIN_HEIGHT, 0);
-        poseStack.translate(offset.x(), offset.y(), offset.z());
-        poseStack.mulPose(Axis.YP.rotationDegrees(90));
+        poseStack.translate(0.5D, 0, 0.5D);
+        Direction dir = animatable.getBlockState().getValue(PantographBlock.FACING);
+        poseStack.mulPose(Axis.YP.rotationDegrees((dir.getAxis() == net.minecraft.core.Direction.Axis.X ? dir.getOpposite() : dir).toYRot()));
+        poseStack.translate(0, PantographBlockEntity.MIN_HEIGHT, PantographBlockEntity.FORWARD_OFFSET);
         
         MultiBufferSource.BufferSource mbs = Minecraft.getInstance().renderBuffers().bufferSource();
 		VertexConsumer consumer = mbs.getBuffer(RenderType.lines());
