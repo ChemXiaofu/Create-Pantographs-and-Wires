@@ -1,5 +1,5 @@
 {
-    "itemGroup.pantographsandwires.tab": "机械动力:受电弓&接触网",
+    "itemGroup.pantographsandwires.tab": "机械动力:受电弓 & 接触网",
     
     "gui.pantographsandwires.sodium_error.title": "机械动力:受电弓&接触网",
     "gui.pantographsandwires.sodium_error.subtitle": "依赖模组提示：已安装 Sodium，但是未安装 Indium！",
